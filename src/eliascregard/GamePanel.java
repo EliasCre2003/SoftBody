@@ -33,9 +33,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Vector2D gravity = new Vector2D(0, 500);
 
 
-    Node[][] bodies = new Node[4][8 * 8];
-
-    Spring[] springs = new Spring[(7 * 8 * 2 + 7 * 7 * 2) * 4];
+    SpringBody[] bodies = new SpringBody[4];
 
     public void wait(int milliseconds) {
         try {
@@ -61,38 +59,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        int springIndex = 0;
-        int a = 0;
-        for (Node[] body : bodies) {
-            int nodeIndex = 0;
-            for (int x = 0; x < 8; x++) {
-                for (int y = 0; y < 8; y++) {
-                    body[nodeIndex] = new Node(new Vector2D(600 + x * 27, Node.NODE_RADIUS + 250*a +y * 27), 5);
-                    nodeIndex++;
-                }
-            }
 
-            for (int x = 0; x < 8; x++) {
-                for (int y = 0; y < 7; y++) {
-                    springs[springIndex] = new Spring(body[x + y * 8], body[x + (y + 1) * 8], 10000, 300);
-                    springIndex++;
-                }
-            }
-            for (int x = 0; x < 7; x++) {
-                for (int y = 0; y < 8; y++) {
-                    springs[springIndex] = new Spring(body[x + y * 8], body[x + 1 + y * 8], 10000, 300);
-                    springIndex++;
-                }
-            }
-            for (int x = 0; x < 7; x++) {
-                for (int y = 0; y < 7; y++) {
-                    springs[springIndex] = new Spring(body[x + y * 8], body[x + 1 + (y + 1) * 8], 10000, 300);
-                    springIndex++;
-                    springs[springIndex] = new Spring(body[x + 1 + y * 8], body[x + (y + 1) * 8], 10000, 300);
-                    springIndex++;
-                }
-            }
-            a++;
+        for (int i = 0; i < bodies.length; i++) {
+            bodies[i] = SpringBody.makeRectangle(600, 100 + i * 250, 8, 8, 1, 2000, 300);
         }
 
         while (gameThread != null) {
@@ -141,8 +110,8 @@ public class GamePanel extends JPanel implements Runnable {
             movement.y += 1000;
         }
 
-        for (Node[] body : bodies) {
-            for (Node node : body) {
+        for (SpringBody body : bodies) {
+            for (Node node : body.nodes) {
 
                 node.applyForce(movement);
 
@@ -169,26 +138,81 @@ public class GamePanel extends JPanel implements Runnable {
                     node.position.y = DEFAULT_SCREEN_SIZE.height - Node.NODE_RADIUS;
                 }
 
-                for (Node[] otherBody : bodies) {
-                    for (Node otherNode : otherBody) {
+                for (SpringBody otherBody : bodies) {
+                    for (Node otherNode : otherBody.nodes) {
                         if (node.isColliding(otherNode) && node != otherNode) {
                             node.resolveCollision(otherNode);
                         }
                     }
                 }
-
             }
+        }
 
-            for (Node node : body) {
+        for (SpringBody body : bodies) {
+            for (Node node : body.nodes) {
                 node.update(deltaT, gravity);
             }
-        }
-        for (Spring spring : springs) {
-            if (spring == null) {
-                continue;
+            int i = 0;
+            for (Spring spring : body.springs) {
+                spring.update(deltaT);
+                i++;
             }
-            spring.update(deltaT);
         }
+
+
+//        for (Node node : test.nodes) {
+//            node.applyForce(movement);
+//        }
+//        test.update(deltaT);
+//
+//        for (Node[] body : bodies) {
+//            for (Node node : body) {
+//
+//                node.applyForce(movement);
+//
+//                if (node.position.x - Node.NODE_RADIUS < 0) {
+//                    if (node.velocity.x < 0) {
+//                        node.velocity.x = -node.velocity.x;
+//                    }
+//                    node.position.x = Node.NODE_RADIUS;
+//                } else if (node.position.x + Node.NODE_RADIUS > DEFAULT_SCREEN_SIZE.width) {
+//                    if (node.velocity.x > 0) {
+//                        node.velocity.x = -node.velocity.x;
+//                    }
+//                    node.position.x = DEFAULT_SCREEN_SIZE.width - Node.NODE_RADIUS;
+//                }
+//                if (node.position.y - Node.NODE_RADIUS < 0) {
+//                    if (node.velocity.y < 0) {
+//                        node.velocity.y = -node.velocity.y;
+//                    }
+//                    node.position.y = Node.NODE_RADIUS;
+//                } else if (node.position.y + Node.NODE_RADIUS > DEFAULT_SCREEN_SIZE.height) {
+//                    if (node.velocity.y > 0) {
+//                        node.velocity.y = -node.velocity.y;
+//                    }
+//                    node.position.y = DEFAULT_SCREEN_SIZE.height - Node.NODE_RADIUS;
+//                }
+//
+//                for (Node[] otherBody : bodies) {
+//                    for (Node otherNode : otherBody) {
+//                        if (node.isColliding(otherNode) && node != otherNode) {
+//                            node.resolveCollision(otherNode);
+//                        }
+//                    }
+//                }
+//
+//            }
+//
+//            for (Node node : body) {
+//                node.update(deltaT, gravity);
+//            }
+//        }
+//        for (Spring spring : springs) {
+//            if (spring == null) {
+//                continue;
+//            }
+//            spring.update(deltaT);
+//        }
     }
 
 
@@ -199,21 +223,17 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(new Color(0,0,0));
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
-        g2.setColor(new Color(255,255,255));
-        for (Spring spring : springs) {
-            if (spring == null) {
-                continue;
+        for (SpringBody body : bodies) {
+            g2.setColor(new Color(255,255,255));
+            g2.setStroke(new BasicStroke((float) (3*SCREEN_SCALE)));
+            for (Spring spring : body.springs) {
+                if (spring != null) {
+                    g2.drawLine((int)(spring.node1.position.x*SCREEN_SCALE), (int)(spring.node1.position.y*SCREEN_SCALE), (int)(spring.node2.position.x*SCREEN_SCALE), (int)(spring.node2.position.y*SCREEN_SCALE));
+                }
             }
-            g2.setStroke(new BasicStroke((int) (3*SCREEN_SCALE)));
-            g2.drawLine( (int) (spring.node1.position.x * SCREEN_SCALE), (int) (spring.node1.position.y * SCREEN_SCALE),
-                    (int) (spring.node2.position.x * SCREEN_SCALE), (int) (spring.node2.position.y * SCREEN_SCALE));
-        }
-
-        g2.setColor(new Color(255, 0, 0));
-        for (Node[] body : bodies) {
-            for (Node node : body) {
-                g2.fillOval((int) (node.position.x * SCREEN_SCALE - Node.NODE_RADIUS * SCREEN_SCALE), (int) (node.position.y * SCREEN_SCALE - Node.NODE_RADIUS * SCREEN_SCALE),
-                        (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE));
+            g2.setColor(new Color(255, 0, 0));
+            for (Node node : body.nodes) {
+                g2.fillOval((int)((node.position.x - Node.NODE_RADIUS)*SCREEN_SCALE), (int)((node.position.y - Node.NODE_RADIUS)*SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE));
             }
         }
 
