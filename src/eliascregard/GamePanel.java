@@ -121,21 +121,30 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+
+        Vector2D movement = new Vector2D();
+
+        if (keyH.rightPressed) {
+            keyH.rightPressed = false;
+            movement.x += 1000;
+        }
+        if (keyH.leftPressed) {
+            keyH.leftPressed = false;
+            movement.x -= 1000;
+        }
+        if (keyH.upPressed) {
+            keyH.upPressed = false;
+            movement.y -= 1000;
+        }
+        if (keyH.downPressed) {
+            keyH.downPressed = false;
+            movement.y += 1000;
+        }
+
         for (Node[] body : bodies) {
             for (Node node : body) {
 
-                if (keyH.rightPressed) {
-                    node.applyForce(new Vector2D(1000, 0), 1);
-                }
-                if (keyH.leftPressed) {
-                    node.applyForce(new Vector2D(-1000, 0), 1);
-                }
-                if (keyH.upPressed) {
-                    node.applyForce(new Vector2D(0, -1000), 1);
-                }
-                if (keyH.downPressed) {
-                    node.applyForce(new Vector2D(0, 1000), 1);
-                }
+                node.applyForce(movement);
 
                 if (node.position.x - Node.NODE_RADIUS < 0) {
                     if (node.velocity.x < 0) {
@@ -173,18 +182,6 @@ public class GamePanel extends JPanel implements Runnable {
             for (Node node : body) {
                 node.update(deltaT, gravity);
             }
-        }
-        if (keyH.rightPressed) {
-            keyH.rightPressed = false;
-        }
-        if (keyH.leftPressed) {
-            keyH.leftPressed = false;
-        }
-        if (keyH.upPressed) {
-            keyH.upPressed = false;
-        }
-        if (keyH.downPressed) {
-            keyH.downPressed = false;
         }
         for (Spring spring : springs) {
             if (spring == null) {
