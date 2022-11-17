@@ -9,7 +9,7 @@ import java.awt.*;
 
 
 public class GamePanel extends JPanel implements Runnable {
-    final Dimension SCREEN_SIZE = new Dimension(2080, 1170);
+    final Dimension SCREEN_SIZE = new Dimension(1600, 900);
     final Dimension DEFAULT_SCREEN_SIZE = new Dimension(1920, 1080);
     final double SCREEN_SCALE = (double) SCREEN_SIZE.width / DEFAULT_SCREEN_SIZE.width;
     int MAX_FRAME_RATE = 0;
@@ -29,8 +29,6 @@ public class GamePanel extends JPanel implements Runnable {
             new Line(new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height), new Vector2D(0, DEFAULT_SCREEN_SIZE.height)),
             new Line(new Vector2D(0, DEFAULT_SCREEN_SIZE.height), new Vector2D(0, 0))
     };
-
-    Line someLine = new Line(new Vector2D(700, 1080), new Vector2D(1000, 1000));
 
     public Vector2D gravity = new Vector2D(0, 500);
 
@@ -205,7 +203,6 @@ public class GamePanel extends JPanel implements Runnable {
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
         g2.setColor(new Color(255,255,255));
-        g2.drawLine((int) (someLine.point1.x * SCREEN_SCALE), (int)(someLine.point1.y * SCREEN_SCALE), (int) (someLine.point2.x * SCREEN_SCALE), (int) (someLine.point2.y * SCREEN_SCALE));
         for (Spring spring : springs) {
             if (spring == null) {
                 continue;
@@ -222,7 +219,6 @@ public class GamePanel extends JPanel implements Runnable {
                         (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE));
             }
         }
-//
 
         g2.setColor(new Color(255, 255, 255));
         g2.drawString("FPS: " + tickSpeed, 10, 20);
