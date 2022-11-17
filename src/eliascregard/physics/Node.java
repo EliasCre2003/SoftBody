@@ -4,7 +4,7 @@ import eliascregard.Line;
 
 public class Node {
 
-    final public static double NODE_RADIUS = 12;
+    final public static double NODE_RADIUS = 11;
 
     public Vector2D position;
     public Vector2D velocity;
