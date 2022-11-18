@@ -27,7 +27,7 @@ public class SpringBody {
         int springIndex = 0;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                nodes[nodeIndex] = new Node(new Vector2D(x+600 + i * 27, y+Node.NODE_RADIUS + j * 27), nodeMass);
+                nodes[nodeIndex] = new Node(new Vector2D(x + i * 27, y+Node.NODE_RADIUS + j * 27), nodeMass);
                 nodeIndex++;
             }
         }
