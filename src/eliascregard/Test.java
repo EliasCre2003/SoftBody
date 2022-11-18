@@ -1,4 +1,4 @@
-package eliascregard.physics;
+package eliascregard;
 
 import java.util.Scanner;
 

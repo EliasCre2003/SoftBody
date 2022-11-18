@@ -9,7 +9,7 @@ import java.awt.*;
 
 
 public class GamePanel extends JPanel implements Runnable {
-    final Dimension SCREEN_SIZE = new Dimension(1600, 900);
+    final Dimension SCREEN_SIZE = Main.SCREEN_SIZE;
     final Dimension DEFAULT_SCREEN_SIZE = new Dimension(1920, 1080);
     final double SCREEN_SCALE = (double) SCREEN_SIZE.width / DEFAULT_SCREEN_SIZE.width;
     int MAX_FRAME_RATE = 0;
@@ -32,8 +32,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Vector2D gravity = new Vector2D(0, 500);
 
-
     SpringBody[] bodies = new SpringBody[4];
+
+    boolean renderMode = true;
 
     public void wait(int milliseconds) {
         try {
@@ -61,16 +62,15 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
 
         for (int i = 0; i < bodies.length; i++) {
-            bodies[i] = SpringBody.makeRectangle(600, 100 + i * 250, 8, 8, 1, 2000, 300);
+            bodies[i] = SpringBody.makeRectangle(600, 100 + i * 250, 8, 8, 1, 10000, 100);
         }
 
         while (gameThread != null) {
             deltaT = time.getDeltaTime();
             tickSpeed = time.getFPS(deltaT);
             renderDeltaT += deltaT;
-            fps = tickSpeed;
-            if (fps > MAX_FRAME_RATE && MAX_FRAME_RATE > 0) {
-                fps = MAX_FRAME_RATE;
+            if (MAX_FRAME_RATE == 0) {
+                fps = time.getFPS(deltaT);
             }
 
             if (keyH.escapePressed) {
@@ -80,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
             update();
             if (MAX_FRAME_RATE > 0) {
                 if (renderDeltaT >= 1.0 / MAX_FRAME_RATE) {
+                    fps = time.getFPS(renderDeltaT);
                     repaint();
                     renderDeltaT -= 1.0 / MAX_FRAME_RATE;
                 }
@@ -91,8 +92,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
 
-        Vector2D movement = new Vector2D();
+        if (keyH.rPressed) {
+            keyH.rPressed = false;
+            renderMode = !renderMode;
+        }
 
+        Vector2D movement = new Vector2D();
         if (keyH.rightPressed) {
             keyH.rightPressed = false;
             movement.x += 1000;
@@ -115,27 +120,27 @@ public class GamePanel extends JPanel implements Runnable {
 
                 node.applyForce(movement);
 
-                if (node.position.x - Node.NODE_RADIUS < 0) {
+                if (node.position.x < 0) {
                     if (node.velocity.x < 0) {
                         node.velocity.x = -node.velocity.x;
                     }
-                    node.position.x = Node.NODE_RADIUS;
-                } else if (node.position.x + Node.NODE_RADIUS > DEFAULT_SCREEN_SIZE.width) {
+                    node.position.x = 0;
+                } else if (node.position.x > DEFAULT_SCREEN_SIZE.width) {
                     if (node.velocity.x > 0) {
                         node.velocity.x = -node.velocity.x;
                     }
-                    node.position.x = DEFAULT_SCREEN_SIZE.width - Node.NODE_RADIUS;
+                    node.position.x = DEFAULT_SCREEN_SIZE.width;
                 }
-                if (node.position.y - Node.NODE_RADIUS < 0) {
+                if (node.position.y < 0) {
                     if (node.velocity.y < 0) {
                         node.velocity.y = -node.velocity.y;
                     }
-                    node.position.y = Node.NODE_RADIUS;
-                } else if (node.position.y + Node.NODE_RADIUS > DEFAULT_SCREEN_SIZE.height) {
+                    node.position.y = 0;
+                } else if (node.position.y > DEFAULT_SCREEN_SIZE.height) {
                     if (node.velocity.y > 0) {
                         node.velocity.y = -node.velocity.y;
                     }
-                    node.position.y = DEFAULT_SCREEN_SIZE.height - Node.NODE_RADIUS;
+                    node.position.y = DEFAULT_SCREEN_SIZE.height;
                 }
 
                 for (SpringBody otherBody : bodies) {
@@ -149,70 +154,8 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         for (SpringBody body : bodies) {
-            for (Node node : body.nodes) {
-                node.update(deltaT, gravity);
-            }
-            int i = 0;
-            for (Spring spring : body.springs) {
-                spring.update(deltaT);
-                i++;
-            }
+            body.update(deltaT, gravity);
         }
-
-
-//        for (Node node : test.nodes) {
-//            node.applyForce(movement);
-//        }
-//        test.update(deltaT);
-//
-//        for (Node[] body : bodies) {
-//            for (Node node : body) {
-//
-//                node.applyForce(movement);
-//
-//                if (node.position.x - Node.NODE_RADIUS < 0) {
-//                    if (node.velocity.x < 0) {
-//                        node.velocity.x = -node.velocity.x;
-//                    }
-//                    node.position.x = Node.NODE_RADIUS;
-//                } else if (node.position.x + Node.NODE_RADIUS > DEFAULT_SCREEN_SIZE.width) {
-//                    if (node.velocity.x > 0) {
-//                        node.velocity.x = -node.velocity.x;
-//                    }
-//                    node.position.x = DEFAULT_SCREEN_SIZE.width - Node.NODE_RADIUS;
-//                }
-//                if (node.position.y - Node.NODE_RADIUS < 0) {
-//                    if (node.velocity.y < 0) {
-//                        node.velocity.y = -node.velocity.y;
-//                    }
-//                    node.position.y = Node.NODE_RADIUS;
-//                } else if (node.position.y + Node.NODE_RADIUS > DEFAULT_SCREEN_SIZE.height) {
-//                    if (node.velocity.y > 0) {
-//                        node.velocity.y = -node.velocity.y;
-//                    }
-//                    node.position.y = DEFAULT_SCREEN_SIZE.height - Node.NODE_RADIUS;
-//                }
-//
-//                for (Node[] otherBody : bodies) {
-//                    for (Node otherNode : otherBody) {
-//                        if (node.isColliding(otherNode) && node != otherNode) {
-//                            node.resolveCollision(otherNode);
-//                        }
-//                    }
-//                }
-//
-//            }
-//
-//            for (Node node : body) {
-//                node.update(deltaT, gravity);
-//            }
-//        }
-//        for (Spring spring : springs) {
-//            if (spring == null) {
-//                continue;
-//            }
-//            spring.update(deltaT);
-//        }
     }
 
 
@@ -224,21 +167,46 @@ public class GamePanel extends JPanel implements Runnable {
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
         for (SpringBody body : bodies) {
-            g2.setColor(new Color(255,255,255));
-            g2.setStroke(new BasicStroke((float) (3*SCREEN_SCALE)));
-            for (Spring spring : body.springs) {
-                if (spring != null) {
-                    g2.drawLine((int)(spring.node1.position.x*SCREEN_SCALE), (int)(spring.node1.position.y*SCREEN_SCALE), (int)(spring.node2.position.x*SCREEN_SCALE), (int)(spring.node2.position.y*SCREEN_SCALE));
+            if (renderMode) {
+                g2.setColor(new Color(255,255,255));
+                g2.setStroke(new BasicStroke((float) (3*SCREEN_SCALE)));
+                for (Spring spring : body.springs) {
+                    if (spring != null) {
+                        g2.drawLine((int)(spring.node1.position.x*SCREEN_SCALE), (int)(spring.node1.position.y*SCREEN_SCALE), (int)(spring.node2.position.x*SCREEN_SCALE), (int)(spring.node2.position.y*SCREEN_SCALE));
+                    }
+                }
+                g2.setColor(new Color(255, 0, 0));
+                for (Node node : body.nodes) {
+                    g2.fillOval((int)((node.position.x - Node.NODE_RADIUS)*SCREEN_SCALE), (int)((node.position.y - Node.NODE_RADIUS)*SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE));
                 }
             }
-            g2.setColor(new Color(255, 0, 0));
-            for (Node node : body.nodes) {
-                g2.fillOval((int)((node.position.x - Node.NODE_RADIUS)*SCREEN_SCALE), (int)((node.position.y - Node.NODE_RADIUS)*SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE));
+            else {
+                g2.setColor(new Color(0,0,255));
+                Polygon polly = new Polygon();
+                for (int i = 0; i < 7; i++) {
+                    polly.addPoint((int)((body.nodes[i].position.x)*SCREEN_SCALE), (int)((body.nodes[i].position.y)*SCREEN_SCALE));
+                }
+                for (int i = 1; i < 8; i++) {
+                    polly.addPoint((int)((body.nodes[i * 8 - 1].position.x)*SCREEN_SCALE), (int)((body.nodes[i * 8 - 1].position.y)*SCREEN_SCALE));
+                }
+                for (int i = 1; i < 8; i++) {
+                    polly.addPoint((int)((body.nodes[body.nodes.length - i].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i].position.y)*SCREEN_SCALE));
+                }
+                for (int i = 1; i < 8; i++) {
+                    polly.addPoint((int)((body.nodes[body.nodes.length - i * 8].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i * 8].position.y)*SCREEN_SCALE));
+                }
+
+
+                g2.fillPolygon(polly);
+
             }
+
+
         }
 
         g2.setColor(new Color(255, 255, 255));
-        g2.drawString("FPS: " + tickSpeed, 10, 20);
+        g2.drawString("FPS: " + fps, 10, 20);
+        g2.drawString("Tickspeed: " + tickSpeed, 10, 40);
 
 
         g2.dispose();

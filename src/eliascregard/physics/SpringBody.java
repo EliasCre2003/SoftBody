@@ -10,9 +10,9 @@ public class SpringBody {
         this.springs = springs;
     }
 
-    public void update(double deltaTime) {
+    public void update(double deltaTime, Vector2D gravity) {
         for (Node node : this.nodes) {
-            node.update(deltaTime);
+            node.update(deltaTime, gravity);
         }
         for (Spring spring : this.springs) {
             spring.update(deltaTime);
