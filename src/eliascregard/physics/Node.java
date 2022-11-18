@@ -4,19 +4,21 @@ import eliascregard.Line;
 
 public class Node {
 
-    final public static double NODE_RADIUS = 11;
+    final public static double DEFAULT_NODE_RADIUS = 11;
 
     public Vector2D position;
     public Vector2D velocity;
     public double mass;
+    public double radius;
 
-    public Node(Vector2D position, double mass) {
+    public Node(Vector2D position, double mass, double radius) {
         this.position = position;
         this.velocity = new Vector2D(0, 0);
         this.mass = mass;
+        this.radius = radius;
     }
     public Node(Vector2D position) {
-        this(position, 1);
+        this(position, 1, DEFAULT_NODE_RADIUS);
     }
 
     public void update(double deltaTime, Vector2D gravity) {
@@ -38,7 +40,7 @@ public class Node {
 
     public boolean isColliding(Node otherNode) {
         double distance = Vector2D.distance(this.position, otherNode.position);
-        return (distance < 2 * NODE_RADIUS) && (distance > 0);
+        return (distance < this.radius + otherNode.radius) && (distance > 0);
     }
 
     public void resolveCollision(Node otherNode) {
@@ -46,7 +48,7 @@ public class Node {
         double distance = Vector2D.distance(this.position, otherNode.position);
         Vector2D direction = Vector2D.subtractVectors(this.position, otherNode.position);
         direction.scale(1 / distance);
-        double correction = (2 * NODE_RADIUS - distance) / 2;
+        double correction = (this.radius + otherNode.radius - distance) / 2;
         this.position.add(direction, correction);
         otherNode.position.add(direction, -correction);
         double p = 2 * (this.velocity.dotProduct(direction) - otherNode.velocity.dotProduct(direction)) / (this.mass + otherNode.mass);
@@ -66,7 +68,7 @@ public class Node {
     public boolean isColliding(Line line) {
         double side1 = Math.sqrt(Math.pow(this.position.x - line.point1.x, 2) + Math.pow(this.position.y - line.point2.y, 2));
         double side2 = Math.sqrt(Math.pow(this.position.x - line.point2.x, 2) + Math.pow(this.position.y - line.point2.y, 2));
-        if (side1 < NODE_RADIUS || side2 < NODE_RADIUS) {
+        if (side1 < this.radius || side2 < this.radius) {
             return true;
         }
 
@@ -80,7 +82,7 @@ public class Node {
                 line.point1.y + dot * (line.point2.y - line.point1.y)
         );
         if (Line.linePoint(line, closestPoint)) {
-            return Vector2D.distance(this.position, closestPoint) < NODE_RADIUS;
+            return Vector2D.distance(this.position, closestPoint) < this.radius;
         }
         return false;
     }

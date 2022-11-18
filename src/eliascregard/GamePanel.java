@@ -12,7 +12,7 @@ public class GamePanel extends JPanel implements Runnable {
     final Dimension SCREEN_SIZE = Main.SCREEN_SIZE;
     final Dimension DEFAULT_SCREEN_SIZE = new Dimension(1920, 1080);
     final double SCREEN_SCALE = (double) SCREEN_SIZE.width / DEFAULT_SCREEN_SIZE.width;
-    int MAX_FRAME_RATE = 0;
+    int MAX_FRAME_RATE = 200;
     int MAX_TICKSPEED = 0;
     public Thread gameThread;
     GameTime time = new GameTime();
@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Vector2D gravity = new Vector2D(0, 500);
 
-    SpringBody[] bodies = new SpringBody[4];
+    SpringBody[] bodies = new SpringBody[1];
 
     boolean renderMode = true;
 
@@ -62,7 +62,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
 
         for (int i = 0; i < bodies.length; i++) {
-            bodies[i] = SpringBody.makeRectangle(600, 100 + i * 250, 8, 8, 1, 10000, 100);
+            bodies[i] = SpringBody.homogeneousRectangle(100 + ((i%7) * 250), 100 + (double) (i / 7) * 250,
+                    12, 12, 1, 1000, 90, 3, 7);
         }
 
         while (gameThread != null) {
@@ -177,23 +178,23 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 g2.setColor(new Color(255, 0, 0));
                 for (Node node : body.nodes) {
-                    g2.fillOval((int)((node.position.x - Node.NODE_RADIUS)*SCREEN_SCALE), (int)((node.position.y - Node.NODE_RADIUS)*SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE), (int) (Node.NODE_RADIUS * 2 * SCREEN_SCALE));
+                    g2.fillOval((int)((node.position.x - node.radius)*SCREEN_SCALE), (int)((node.position.y - node.radius)*SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE));
                 }
             }
             else {
                 g2.setColor(new Color(0,0,255));
                 Polygon polly = new Polygon();
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < body.height - 1; i++) {
                     polly.addPoint((int)((body.nodes[i].position.x)*SCREEN_SCALE), (int)((body.nodes[i].position.y)*SCREEN_SCALE));
                 }
-                for (int i = 1; i < 8; i++) {
-                    polly.addPoint((int)((body.nodes[i * 8 - 1].position.x)*SCREEN_SCALE), (int)((body.nodes[i * 8 - 1].position.y)*SCREEN_SCALE));
+                for (int i = 1; i < body.width; i++) {
+                    polly.addPoint((int)((body.nodes[i * body.height - 1].position.x)*SCREEN_SCALE), (int)((body.nodes[i * body.height - 1].position.y)*SCREEN_SCALE));
                 }
-                for (int i = 1; i < 8; i++) {
+                for (int i = 1; i < body.height; i++) {
                     polly.addPoint((int)((body.nodes[body.nodes.length - i].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i].position.y)*SCREEN_SCALE));
                 }
-                for (int i = 1; i < 8; i++) {
-                    polly.addPoint((int)((body.nodes[body.nodes.length - i * 8].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i * 8].position.y)*SCREEN_SCALE));
+                for (int i = 1; i < body.width; i++) {
+                    polly.addPoint((int)((body.nodes[body.nodes.length - i * body.height].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i * body.height].position.y)*SCREEN_SCALE));
                 }
 
 
