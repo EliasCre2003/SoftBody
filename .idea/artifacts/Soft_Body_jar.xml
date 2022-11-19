@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Soft Body:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Soft_Body_jar</output-path>
+    <root id="archive" name="Soft Body.jar">
+      <element id="module-output" name="Soft Body" />
+    </root>
+  </artifact>
+</component>

@@ -6,6 +6,7 @@ import eliascregard.physics.Spring;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Polygon;
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -32,7 +33,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Vector2D gravity = new Vector2D(0, 500);
 
-    SpringBody[] bodies = new SpringBody[1];
+    SpringBody[] bodies;
+    StaticObject test;
 
     boolean renderMode = true;
 
@@ -60,11 +62,20 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-
+        bodies = new SpringBody[1];
         for (int i = 0; i < bodies.length; i++) {
-            bodies[i] = SpringBody.homogeneousRectangle(100 + ((i%7) * 250), 100 + (double) (i / 7) * 250,
-                    12, 12, 1, 1000, 90, 3, 7);
+            bodies[i] = SpringBody.homogeneousRectangle(600 + ((i%7) * 250), 200 + (double) (i / 7) * 250,
+                    8, 8, 1, 7000, 300, 5, 11);
         }
+        test = new StaticObject(
+                new Vector2D[] {
+                        new Vector2D(100, 100),
+                        new Vector2D(200, 100),
+                        new Vector2D(200, 200),
+                        new Vector2D(100, 200)
+                }
+        );
+
 
         while (gameThread != null) {
             deltaT = time.getDeltaTime();
@@ -120,6 +131,10 @@ public class GamePanel extends JPanel implements Runnable {
             for (Node node : body.nodes) {
 
                 node.applyForce(movement);
+                Vector2D point = node.isColliding(test);
+                if (point != null) {
+                    node.resolveCollision(point);
+                }
 
                 if (node.position.x < 0) {
                     if (node.velocity.x < 0) {
@@ -196,14 +211,12 @@ public class GamePanel extends JPanel implements Runnable {
                 for (int i = 1; i < body.width; i++) {
                     polly.addPoint((int)((body.nodes[body.nodes.length - i * body.height].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i * body.height].position.y)*SCREEN_SCALE));
                 }
-
-
                 g2.fillPolygon(polly);
-
             }
-
-
         }
+
+        g2.setColor(new Color(255,255,255));
+        g2.fillPolygon(test.getPolygon(SCREEN_SCALE));
 
         g2.setColor(new Color(255, 255, 255));
         g2.drawString("FPS: " + fps, 10, 20);

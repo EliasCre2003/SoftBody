@@ -1,7 +1,5 @@
 package eliascregard.physics;
 
-import eliascregard.Line;
-
 public class Node {
 
     final public static double DEFAULT_NODE_RADIUS = 11;
@@ -94,6 +92,54 @@ public class Node {
         Vector2D collisionVector = Vector2D.angleToVector(reflectionAngle);
         collisionVector.scale(this.velocity.length());
         this.velocity = collisionVector;
+    }
+
+    public Vector2D isColliding(StaticObject staticObject) {
+        Line[] polygonLines = staticObject.getLines();
+        Line ray = new Line(this.position, new Vector2D(this.position.x + 10000, this.position.y));
+        int intersections = 0;
+        Vector2D[] closestPoints = new Vector2D[polygonLines.length];
+        for (int i = 0; i < polygonLines.length; i++) {
+            Vector2D intersectionPoint = Line.lineLineIntersection(ray, polygonLines[i]);
+            if (intersectionPoint != null) {
+                intersections++;
+            }
+            closestPoints[i] = Line.closestPointOnLineToPoint(polygonLines[i], this.position);
+        }
+        if (intersections % 2 == 0) {
+            return null;
+        }
+        Vector2D closestPoint = null;
+        double closestDistance = Double.MAX_VALUE;
+        for (Vector2D intersectionPoint : closestPoints) {
+            if (intersectionPoint != null) {
+                double distance = Vector2D.distance(this.position, intersectionPoint);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestPoint = intersectionPoint;
+                }
+            }
+        }
+        return closestPoint;
+    }
+
+    public void resolveCollision(Vector2D closestPoint) {
+        Vector2D direction = Vector2D.subtractVectors(this.position, closestPoint);
+        direction.scale(1 / direction.length());
+        double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 2;
+        this.position.add(direction, -correction);
+        double p = 2 * this.velocity.dotProduct(direction) / this.mass;
+        if (Double.isNaN(p)) {
+            System.out.println("p is NaN");
+            return;
+        }
+        Vector2D pushVector = direction.makeCopy();
+        pushVector.scale(p * this.mass);
+        this.velocity.subtract(pushVector);
+    }
+
+    public Node makeCopy() {
+        return new Node(this.position.makeCopy(), this.mass, this.radius);
     }
 
 

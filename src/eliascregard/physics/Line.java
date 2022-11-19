@@ -1,6 +1,4 @@
-package eliascregard;
-
-import eliascregard.physics.Vector2D;
+package eliascregard.physics;
 
 public class Line {
     public Vector2D point1;
@@ -55,5 +53,20 @@ public class Line {
         double lineLength = line.length();
         double buffer = 0.1;
         return d1 + d2 >= lineLength - buffer && d1 + d2 <= lineLength + buffer;
+    }
+
+    public static Vector2D closestPointOnLineToPoint(Line line, Vector2D point) {
+        Vector2D P = line.point1;
+        Vector2D Q = line.point2;
+        Vector2D v = new Vector2D(Q.x - P.x, Q.y - P.y);
+        double lambdaS = v.dotProduct(new Vector2D(point.x - P.x, point.y - P.y)) / v.dotProduct(v);
+        if (lambdaS <= 0) {
+            return P.makeCopy();
+        } else if (lambdaS >= 1) {
+            return Q.makeCopy();
+        } else {
+            v.scale(lambdaS);
+            return P.add(v);
+        }
     }
 }
