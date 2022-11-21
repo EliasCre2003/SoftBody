@@ -5,9 +5,16 @@ import java.awt.*;
 public class StaticObject {
 
     public Vector2D[] vertices;
+    public double frictionCoefficient;
+    public double restitutionCoefficient;
 
-    public StaticObject(Vector2D[] vertices) {
+    public StaticObject(Vector2D[] vertices, double frictionCoefficient, double restitutionCoefficient) {
         this.vertices = vertices;
+        this.frictionCoefficient = frictionCoefficient;
+        this.restitutionCoefficient = restitutionCoefficient;
+    }
+    public StaticObject(Vector2D[] vertices) {
+        this(vertices, 0, 1);
     }
 
     public Line[] getLines() {
@@ -29,7 +36,7 @@ public class StaticObject {
         return getPolygon(1);
     }
 
-    public double[] getPerimiter() {
+    public double[] getPerimeter() {
         double[] perimiter = new double[4];
         double maxX = -Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;

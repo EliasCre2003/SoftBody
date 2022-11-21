@@ -19,7 +19,7 @@ public class Spring {
         this.restLength = Vector2D.distance(node1.position, node2.position);
     }
 
-    public void update(double deltaTime) {
+    public void update() {
 
         double deltaLength = Vector2D.distance(node1.position, node2.position) - this.restLength;
         double springForce = deltaLength * this.stiffness;
@@ -28,9 +28,13 @@ public class Spring {
         double force = springForce + deltaVelocity.dotProduct(normalizedDirectionVector) * this.dampingFactor;
         Vector2D forceVector = normalizedDirectionVector.makeCopy();
         forceVector.scale(force);
-        node2.applyForce(forceVector, deltaTime);
+        node2.applyForce(forceVector);
         forceVector.scale(-1);
-        node1.applyForce(forceVector, deltaTime);
+        node1.applyForce(forceVector);
+    }
+
+    public double getLength() {
+        return Vector2D.distance(node1.position, node2.position);
     }
 
 }

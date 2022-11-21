@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import java.util.Arrays;
+
 public class SpringBody {
 
     public Node[] nodes;
@@ -19,8 +21,17 @@ public class SpringBody {
             node.update(deltaTime, gravity);
         }
         for (Spring spring : this.springs) {
-            spring.update(deltaTime);
+            spring.update();
+            if (spring.getLength() > 2 * spring.restLength) {
+                this.removeSpring(spring);
+            }
         }
+    }
+
+    public void removeSpring(Spring spring) {
+        int index = Arrays.asList(this.springs).indexOf(spring);
+        if (this.springs.length - index - 1 >= 0)
+            System.arraycopy(this.springs, index + 1, this.springs, index, this.springs.length - index - 1);
     }
 
     public static SpringBody homogeneousRectangle(double x, double y, int width, int height,

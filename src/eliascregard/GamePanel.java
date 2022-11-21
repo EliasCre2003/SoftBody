@@ -75,7 +75,8 @@ public class GamePanel extends JPanel implements Runnable {
                         new Vector2D(200, 100),
                         new Vector2D(200, 200),
                         new Vector2D(100, 200)
-                }
+                },
+                0, 0.5
         );
         staticObjects[1] = new StaticObject(
                 new Vector2D[] {
@@ -83,7 +84,8 @@ public class GamePanel extends JPanel implements Runnable {
                         new Vector2D(400, 300),
                         new Vector2D(400, 500),
                         new Vector2D(300, 300)
-                }
+                },
+                0,0.5
         );
 
 

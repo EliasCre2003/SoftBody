@@ -10,12 +10,15 @@ public class Node {
     public double mass;
     public double radius;
 
+    public Vector2D totalForceVector;
+
     public Node(Vector2D position, double mass, double radius) {
         this.position = position;
         this.previousPosition = position.makeCopy();
         this.velocity = new Vector2D(0, 0);
         this.mass = mass;
         this.radius = radius;
+        this.totalForceVector = new Vector2D(0, 0);
     }
     public Node(Vector2D position) {
         this(position, 1, DEFAULT_NODE_RADIUS);
@@ -24,18 +27,17 @@ public class Node {
     public void update(double deltaTime, Vector2D gravity) {
         Vector2D gravityVector = gravity.makeCopy();
         gravityVector.scale(this.mass);
-        this.applyForce(gravityVector, deltaTime);
+        this.applyForce(gravityVector);
+        this.velocity.add(this.totalForceVector, deltaTime / this.mass);
         this.position.add(this.velocity, deltaTime);
+        this.totalForceVector.set(0, 0);
     }
     public void update(double deltaTime) {
         this.update(deltaTime, new Vector2D(0, 9.82));
     }
 
-    public void applyForce(Vector2D forceVector, double deltaTime) {
-        this.velocity.add(forceVector, deltaTime / this.mass);
-    }
     public void applyForce(Vector2D forceVector) {
-        this.applyForce(forceVector, 1);
+        this.totalForceVector.add(forceVector);
     }
 
     public boolean isColliding(Node otherNode) {
@@ -97,7 +99,7 @@ public class Node {
     }
 
     public boolean insidePerimeter(StaticObject staticObject) {
-        double[] perimeter = staticObject.getPerimiter();
+        double[] perimeter = staticObject.getPerimeter();
         return this.position.x < perimeter[0] && this.position.y < perimeter[1] &&
                 this.position.x > perimeter[2] && this.position.y > perimeter[3];
     }
@@ -136,9 +138,10 @@ public class Node {
         direction.scale(1 / direction.length());
         double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 2;
         this.position.add(direction, -correction);
-        double p = 2 * this.velocity.dotProduct(direction) / this.mass;
+        double p = 2 * this.velocity.dotProduct(direction);
         Vector2D pushVector = direction.makeCopy();
-        pushVector.scale(p * this.mass);
+        double restitution = staticObject.restitutionCoefficient / 2 + 0.5;
+        pushVector.scale(p * restitution);
         this.velocity.subtract(pushVector);
     }
 
