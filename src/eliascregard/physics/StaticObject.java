@@ -29,6 +29,33 @@ public class StaticObject {
         return getPolygon(1);
     }
 
+    public double[] getPerimiter() {
+        double[] perimiter = new double[4];
+        double maxX = -Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        for (int i = 0; i < vertices.length; i++) {
+            if (vertices[i].x > maxX) {
+                maxX = vertices[i].x;
+            }
+            if (vertices[i].y > maxY) {
+                maxY = vertices[i].y;
+            }
+            if (vertices[i].x < minX) {
+                minX = vertices[i].x;
+            }
+            if (vertices[i].y < minY) {
+                minY = vertices[i].y;
+            }
+        }
+        perimiter[0] = maxX;
+        perimiter[1] = maxY;
+        perimiter[2] = minX;
+        perimiter[3] = minY;
+        return perimiter;
+    }
+
     public void move(Vector2D delta) {
         for (Vector2D vertex : vertices) {
             vertex.sum(delta);

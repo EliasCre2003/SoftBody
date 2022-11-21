@@ -34,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
     public Vector2D gravity = new Vector2D(0, 500);
 
     SpringBody[] bodies;
-    StaticObject test;
+    StaticObject[] staticObjects;
 
     boolean renderMode = true;
 
@@ -64,15 +64,25 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
         bodies = new SpringBody[1];
         for (int i = 0; i < bodies.length; i++) {
-            bodies[i] = SpringBody.homogeneousRectangle(600 + ((i%7) * 250), 200 + (double) (i / 7) * 250,
-                    8, 8, 1, 7000, 300, 5, 11);
+            bodies[i] = SpringBody.homogeneousRectangle(800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
+                    8, 8, 1, 5000, 100, 5, 10);
         }
-        test = new StaticObject(
+
+        staticObjects = new StaticObject[2];
+        staticObjects[0] = new StaticObject(
                 new Vector2D[] {
                         new Vector2D(100, 100),
                         new Vector2D(200, 100),
                         new Vector2D(200, 200),
                         new Vector2D(100, 200)
+                }
+        );
+        staticObjects[1] = new StaticObject(
+                new Vector2D[] {
+                        new Vector2D(300, 100),
+                        new Vector2D(400, 300),
+                        new Vector2D(400, 500),
+                        new Vector2D(300, 300)
                 }
         );
 
@@ -130,10 +140,12 @@ public class GamePanel extends JPanel implements Runnable {
         for (SpringBody body : bodies) {
             for (Node node : body.nodes) {
 
-                node.applyForce(movement);
-                Vector2D point = node.isColliding(test);
-                if (point != null) {
-                    node.resolveCollision(point);
+                node.velocity.add(movement);
+
+                for (StaticObject staticObject : staticObjects) {
+                    if (node.insidePerimeter(staticObject)) {
+                        node.resolveCollision(staticObject);
+                    }
                 }
 
                 if (node.position.x < 0) {
@@ -183,6 +195,9 @@ public class GamePanel extends JPanel implements Runnable {
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
         for (SpringBody body : bodies) {
+            if (body == null) {
+                continue;
+            }
             if (renderMode) {
                 g2.setColor(new Color(255,255,255));
                 g2.setStroke(new BasicStroke((float) (3*SCREEN_SCALE)));
@@ -216,7 +231,12 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         g2.setColor(new Color(255,255,255));
-        g2.fillPolygon(test.getPolygon(SCREEN_SCALE));
+        for (StaticObject staticObject : staticObjects) {
+            if (staticObject == null) {
+                continue;
+            }
+            g2.drawPolygon(staticObject.getPolygon(SCREEN_SCALE));
+        }
 
         g2.setColor(new Color(255, 255, 255));
         g2.drawString("FPS: " + fps, 10, 20);
