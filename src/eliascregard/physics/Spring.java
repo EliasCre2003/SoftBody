@@ -23,8 +23,8 @@ public class Spring {
 
         double deltaLength = Vector2D.distance(node1.position, node2.position) - this.restLength;
         double springForce = deltaLength * this.stiffness;
-        Vector2D normalizedDirectionVector = Vector2D.subtractVectors(node1.position, node2.position).normalize();
-        Vector2D deltaVelocity = Vector2D.subtractVectors(node1.velocity, node2.velocity);
+        Vector2D normalizedDirectionVector = Vector2D.difference(node1.position, node2.position).normalized();
+        Vector2D deltaVelocity = Vector2D.difference(node1.velocity, node2.velocity);
         double force = springForce + deltaVelocity.dotProduct(normalizedDirectionVector) * this.dampingFactor;
         Vector2D forceVector = normalizedDirectionVector.makeCopy();
         forceVector.scale(force);

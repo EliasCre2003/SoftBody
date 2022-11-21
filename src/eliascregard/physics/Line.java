@@ -64,9 +64,7 @@ public class Line {
             return P.makeCopy();
         } else if (lambdaS >= 1) {
             return Q.makeCopy();
-        } else {
-            v.scale(lambdaS);
-            return P.add(v);
         }
+        return P.sum(v.product(lambdaS));
     }
 }

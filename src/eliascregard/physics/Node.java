@@ -5,12 +5,14 @@ public class Node {
     final public static double DEFAULT_NODE_RADIUS = 11;
 
     public Vector2D position;
+    public Vector2D previousPosition;
     public Vector2D velocity;
     public double mass;
     public double radius;
 
     public Node(Vector2D position, double mass, double radius) {
         this.position = position;
+        this.previousPosition = position.makeCopy();
         this.velocity = new Vector2D(0, 0);
         this.mass = mass;
         this.radius = radius;
@@ -44,7 +46,7 @@ public class Node {
     public void resolveCollision(Node otherNode) {
 
         double distance = Vector2D.distance(this.position, otherNode.position);
-        Vector2D direction = Vector2D.subtractVectors(this.position, otherNode.position);
+        Vector2D direction = Vector2D.difference(this.position, otherNode.position);
         direction.scale(1 / distance);
         double correction = (this.radius + otherNode.radius - distance) / 2;
         this.position.add(direction, correction);
@@ -70,7 +72,7 @@ public class Node {
             return true;
         }
 
-        Vector2D distanceVector = Vector2D.subtractVectors(line.point1, line.point2);
+        Vector2D distanceVector = Vector2D.difference(line.point1, line.point2);
         double dot = (
                 (this.position.x - line.point1.x) * (line.point2.x - line.point1.x) +
                 (this.position.y - line.point1.y) * (line.point2.y - line.point1.y)
@@ -124,7 +126,7 @@ public class Node {
     }
 
     public void resolveCollision(Vector2D closestPoint) {
-        Vector2D direction = Vector2D.subtractVectors(this.position, closestPoint);
+        Vector2D direction = Vector2D.difference(this.position, closestPoint);
         direction.scale(1 / direction.length());
         double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 2;
         this.position.add(direction, -correction);

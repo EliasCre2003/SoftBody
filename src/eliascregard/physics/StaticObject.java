@@ -31,7 +31,7 @@ public class StaticObject {
 
     public void move(Vector2D delta) {
         for (Vector2D vertex : vertices) {
-            vertex.add(delta);
+            vertex.sum(delta);
         }
     }
 
