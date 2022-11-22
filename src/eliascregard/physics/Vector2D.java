@@ -37,6 +37,13 @@ public class Vector2D {
         return new Vector2D(this.x * scalar, this.y * scalar);
     }
 
+    public void negate() {
+        this.scale(-1);
+    }
+    public Vector2D negated() {
+        return this.scaled(-1);
+    }
+
     public void add(Vector2D otherVector, double scalar) {
         this.x += otherVector.x * scalar;
         this.y += otherVector.y * scalar;
@@ -79,8 +86,23 @@ public class Vector2D {
         this.set(this.normalized());
     }
 
+    public void setDirection(double angle) {
+        this.set(angleToVector(angle, this.length()));
+    }
+    public double getDirection() {
+        return vectorToAngle(this);
+    }
+    public void rotate(double angle) {
+        double newAngle = angle + this.getDirection();
+        this.setDirection(newAngle);
+    }
+
     public double dotProduct(Vector2D otherVector) {
         return this.x * otherVector.x + this.y * otherVector.y;
+    }
+
+    public double crossProduct(Vector2D otherVector) {
+        return this.x * otherVector.y - this.y * otherVector.x;
     }
 
     public static double vectorToAngle(Vector2D vector) {

@@ -22,7 +22,7 @@ public class Spring {
     public void update() {
 
         double deltaLength = Vector2D.distance(node1.position, node2.position) - this.restLength;
-        double springForce = deltaLength * this.stiffness;
+        double springForce = deltaLength * Math.abs(deltaLength) * this.stiffness;
         Vector2D normalizedDirectionVector = Vector2D.difference(node1.position, node2.position).normalized();
         Vector2D deltaVelocity = Vector2D.difference(node1.velocity, node2.velocity);
         double force = springForce + deltaVelocity.dotProduct(normalizedDirectionVector) * this.dampingFactor;

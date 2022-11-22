@@ -16,6 +16,7 @@ public class GamePanel extends JPanel implements Runnable {
     int MAX_FRAME_RATE = 200;
     int MAX_TICKSPEED = 0;
     public Thread gameThread;
+    int ticks = 0;
     GameTime time = new GameTime();
     KeyHandler keyH = new KeyHandler();
     MouseHandler mouseH = new MouseHandler();
@@ -24,17 +25,49 @@ public class GamePanel extends JPanel implements Runnable {
     double renderDeltaT = 0;
     public int fps;
 
-    final Line[] SCREEN_LINES = new Line[] {
-            new Line(new Vector2D(0, 0), new Vector2D(DEFAULT_SCREEN_SIZE.width, 0)),
-            new Line(new Vector2D(DEFAULT_SCREEN_SIZE.width, 0), new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height)),
-            new Line(new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height), new Vector2D(0, DEFAULT_SCREEN_SIZE.height)),
-            new Line(new Vector2D(0, DEFAULT_SCREEN_SIZE.height), new Vector2D(0, 0))
-    };
-
     public Vector2D gravity = new Vector2D(0, 500);
 
     SpringBody[] bodies;
     StaticObject[] staticObjects;
+    RigidBody[] rigidBodies;
+    final StaticObject[] screenBounds = new StaticObject[] {
+            new StaticObject(
+                    new Vector2D[] {
+                            new Vector2D(-1000,-1000),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width, -1000),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width, 0),
+                            new Vector2D(-1000, 0)
+                    },
+                    1, 0.5
+            ),
+            new StaticObject(
+                    new Vector2D[] {
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, -1000),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width, 0)
+                    },
+                    1, 0.5
+            ),
+            new StaticObject(
+                    new Vector2D[] {
+                            new Vector2D(0, DEFAULT_SCREEN_SIZE.height + 1000),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height + 1000),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height),
+                            new Vector2D(0, DEFAULT_SCREEN_SIZE.height)
+                    },
+                    1, 0
+            ),
+            new StaticObject(
+                    new Vector2D[] {
+                            new Vector2D(-1000, 0),
+                            new Vector2D(0, 0),
+                            new Vector2D(0, DEFAULT_SCREEN_SIZE.height + 1000),
+                            new Vector2D(-1000, DEFAULT_SCREEN_SIZE.height + 1000)
+                    },
+                    1, 0.5
+            )
+    };
 
     boolean renderMode = true;
 
@@ -65,7 +98,7 @@ public class GamePanel extends JPanel implements Runnable {
         bodies = new SpringBody[1];
         for (int i = 0; i < bodies.length; i++) {
             bodies[i] = SpringBody.homogeneousRectangle(800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
-                    8, 8, 1, 5000, 100, 5, 10);
+                    8, 8, 1, 1000, 100, 5, 10);
         }
 
         staticObjects = new StaticObject[2];
@@ -87,10 +120,22 @@ public class GamePanel extends JPanel implements Runnable {
                 },
                 0,0.5
         );
+        rigidBodies = new RigidBody[1];
+        rigidBodies[0] = new RigidBody(
+                new Vector2D(
+                        500,
+                        100
+                ),
+                100, 100, 1, 0
+        );
+
 
 
         while (gameThread != null) {
             deltaT = time.getDeltaTime();
+            if (ticks == 0) {
+                deltaT = 0;
+            }
             tickSpeed = time.getFPS(deltaT);
             renderDeltaT += deltaT;
             if (MAX_FRAME_RATE == 0) {
@@ -102,6 +147,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             update();
+            ticks++;
             if (MAX_FRAME_RATE > 0) {
                 if (renderDeltaT >= 1.0 / MAX_FRAME_RATE) {
                     fps = time.getFPS(renderDeltaT);
@@ -115,6 +161,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+//        System.out.println(mouseH.x + ", " + mouseH.y);
 
         if (keyH.rPressed) {
             keyH.rPressed = false;
@@ -150,27 +197,33 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
 
-                if (node.position.x < 0) {
-                    if (node.velocity.x < 0) {
-                        node.velocity.x = -node.velocity.x;
+//                if (node.position.x < 0) {
+//                    if (node.velocity.x < 0) {
+//                        node.velocity.x = -node.velocity.x;
+//                    }
+//                    node.position.x = 0;
+//                } else if (node.position.x > DEFAULT_SCREEN_SIZE.width) {
+//                    if (node.velocity.x > 0) {
+//                        node.velocity.x = -node.velocity.x;
+//                    }
+//                    node.position.x = DEFAULT_SCREEN_SIZE.width;
+//                }
+//                if (node.position.y < 0) {
+//                    if (node.velocity.y < 0) {
+//                        node.velocity.y = -node.velocity.y;
+//                    }
+//                    node.position.y = 0;
+//                } else if (node.position.y > DEFAULT_SCREEN_SIZE.height) {
+//                    if (node.velocity.y > 0) {
+//                        node.velocity.y = -node.velocity.y;
+//                    }
+//                    node.position.y = DEFAULT_SCREEN_SIZE.height;
+//                }
+
+                for (StaticObject bound : screenBounds) {
+                    if (node.insidePerimeter(bound)) {
+                        node.resolveCollision(bound);
                     }
-                    node.position.x = 0;
-                } else if (node.position.x > DEFAULT_SCREEN_SIZE.width) {
-                    if (node.velocity.x > 0) {
-                        node.velocity.x = -node.velocity.x;
-                    }
-                    node.position.x = DEFAULT_SCREEN_SIZE.width;
-                }
-                if (node.position.y < 0) {
-                    if (node.velocity.y < 0) {
-                        node.velocity.y = -node.velocity.y;
-                    }
-                    node.position.y = 0;
-                } else if (node.position.y > DEFAULT_SCREEN_SIZE.height) {
-                    if (node.velocity.y > 0) {
-                        node.velocity.y = -node.velocity.y;
-                    }
-                    node.position.y = DEFAULT_SCREEN_SIZE.height;
                 }
 
                 for (SpringBody otherBody : bodies) {
@@ -180,11 +233,19 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                     }
                 }
+
             }
         }
 
         for (SpringBody body : bodies) {
             body.update(deltaT, gravity);
+        }
+        for (RigidBody rigidBody : rigidBodies) {
+            if (deltaT > 0) {
+                rigidBody.applyForce(movement.scaled(1/deltaT), new Vector2D(50, 50));
+            }
+//            System.out.println(rigidBody.position);
+            rigidBody.update(deltaT, gravity);
         }
     }
 
@@ -238,6 +299,15 @@ public class GamePanel extends JPanel implements Runnable {
                 continue;
             }
             g2.drawPolygon(staticObject.getPolygon(SCREEN_SCALE));
+        }
+
+        g2.setColor(new Color(0, 255, 0));
+        for (RigidBody rigidBody : rigidBodies) {
+            if (rigidBody == null) {
+                System.out.println("null");
+                continue;
+            }
+            g2.drawPolygon(rigidBody.getPolygon(SCREEN_SCALE));
         }
 
         g2.setColor(new Color(255, 255, 255));
