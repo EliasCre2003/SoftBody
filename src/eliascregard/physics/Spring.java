@@ -37,4 +37,8 @@ public class Spring {
         return Vector2D.distance(node1.position, node2.position);
     }
 
+    public Spring makeCopy() {
+        return new Spring(this.node1, this.node2, this.stiffness, this.dampingFactor);
+    }
+
 }

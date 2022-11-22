@@ -64,7 +64,6 @@ public class RigidBody {
         points[3] = new Vector2D(-width / 2, height / 2);
         for (Vector2D point : points) {
             point.rotate(angle);
-            System.out.println(point);
             point.add(position);
         }
         return points;

@@ -7,6 +7,7 @@ import eliascregard.physics.Spring;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Polygon;
+import java.util.Arrays;
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -27,7 +28,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Vector2D gravity = new Vector2D(0, 500);
 
-    SpringBody[] bodies;
+    SpringBody[] springBodies;
+    SpringBody defaultSpringBody = SpringBody.homogeneousRectangle(800,  0,
+            8, 8, 1, 1000, 100, 5, 10);
     StaticObject[] staticObjects;
     RigidBody[] rigidBodies;
     final StaticObject[] screenBounds = new StaticObject[] {
@@ -71,7 +74,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     boolean renderMode = true;
 
-    public void wait(int milliseconds) {
+    void resetBodies() {
+        springBodies = new SpringBody[0];
+        rigidBodies = new RigidBody[0];
+    }
+
+    void wait(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
@@ -95,9 +103,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        bodies = new SpringBody[1];
-        for (int i = 0; i < bodies.length; i++) {
-            bodies[i] = SpringBody.homogeneousRectangle(800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
+        springBodies = new SpringBody[1];
+        for (int i = 0; i < springBodies.length; i++) {
+            springBodies[i] = SpringBody.homogeneousRectangle(800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
                     8, 8, 1, 1000, 100, 5, 10);
         }
 
@@ -133,9 +141,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         while (gameThread != null) {
             deltaT = time.getDeltaTime();
-            if (ticks == 0) {
-                deltaT = 0;
-            }
+            if (ticks == 0) {deltaT = 0;}
             tickSpeed = time.getFPS(deltaT);
             renderDeltaT += deltaT;
             if (MAX_FRAME_RATE == 0) {
@@ -163,8 +169,17 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
 //        System.out.println(mouseH.x + ", " + mouseH.y);
 
+//        if (keyH.enterPressed) {
+//            keyH.enterPressed = false;
+//            springBodies = Arrays.copyOf(springBodies, springBodies.length + 1);
+//            springBodies[springBodies.length - 1] = defaultSpringBody.makeCopy();
+//        }
         if (keyH.rPressed) {
             keyH.rPressed = false;
+            resetBodies();
+        }
+        if (keyH.tPressed) {
+            keyH.tPressed = false;
             renderMode = !renderMode;
         }
 
@@ -186,7 +201,7 @@ public class GamePanel extends JPanel implements Runnable {
             movement.y += 1000;
         }
 
-        for (SpringBody body : bodies) {
+        for (SpringBody body : springBodies) {
             for (Node node : body.nodes) {
 
                 node.velocity.add(movement);
@@ -226,7 +241,7 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
 
-                for (SpringBody otherBody : bodies) {
+                for (SpringBody otherBody : springBodies) {
                     for (Node otherNode : otherBody.nodes) {
                         if (node.isColliding(otherNode) && node != otherNode) {
                             node.resolveCollision(otherNode);
@@ -237,14 +252,13 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
 
-        for (SpringBody body : bodies) {
+        for (SpringBody body : springBodies) {
             body.update(deltaT, gravity);
         }
         for (RigidBody rigidBody : rigidBodies) {
             if (deltaT > 0) {
                 rigidBody.applyForce(movement.scaled(1/deltaT), new Vector2D(50, 50));
             }
-//            System.out.println(rigidBody.position);
             rigidBody.update(deltaT, gravity);
         }
     }
@@ -257,7 +271,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(new Color(0,0,0));
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
-        for (SpringBody body : bodies) {
+        for (SpringBody body : springBodies) {
             if (body == null) {
                 continue;
             }

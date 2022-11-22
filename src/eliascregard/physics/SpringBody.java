@@ -74,4 +74,16 @@ public class SpringBody {
         return new SpringBody(nodes, springs, width, height);
     }
 
+    public SpringBody makeCopy() {
+        Node[] nodes = new Node[this.nodes.length];
+        for (int i = 0; i < this.nodes.length; i++) {
+            nodes[i] = this.nodes[i].makeCopy();
+        }
+        Spring[] springs = new Spring[this.springs.length];
+        for (int i = 0; i < this.springs.length; i++) {
+            springs[i] = this.springs[i].makeCopy();
+        }
+        return new SpringBody(nodes, springs, this.width, this.height);
+    }
+
 }
