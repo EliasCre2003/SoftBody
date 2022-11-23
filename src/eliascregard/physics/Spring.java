@@ -22,15 +22,14 @@ public class Spring {
     public void update() {
 
         double deltaLength = Vector2D.distance(node1.position, node2.position) - this.restLength;
-        double springForce = deltaLength * Math.abs(deltaLength) * this.stiffness;
-        Vector2D normalizedDirectionVector = Vector2D.difference(node1.position, node2.position).normalized();
+        double springForce = deltaLength * this.stiffness;
+        Vector2D directionVector = Vector2D.difference(node1.position, node2.position).normalized();
         Vector2D deltaVelocity = Vector2D.difference(node1.velocity, node2.velocity);
-        double force = springForce + deltaVelocity.dotProduct(normalizedDirectionVector) * this.dampingFactor;
-        Vector2D forceVector = normalizedDirectionVector.makeCopy();
-        forceVector.scale(force);
+        double force = springForce + deltaVelocity.dotProduct(directionVector) * this.dampingFactor;
+        Vector2D forceVector = directionVector.makeCopy().scaled(force);
         node2.applyForce(forceVector);
-        forceVector.scale(-1);
-        node1.applyForce(forceVector);
+        node1.applyForce(forceVector.negated());
+
     }
 
     public double getLength() {

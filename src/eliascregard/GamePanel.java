@@ -106,7 +106,7 @@ public class GamePanel extends JPanel implements Runnable {
         springBodies = new SpringBody[1];
         for (int i = 0; i < springBodies.length; i++) {
             springBodies[i] = SpringBody.homogeneousRectangle(800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
-                    8, 8, 1, 1000, 100, 5, 10);
+                    8, 8, 1, 5000, 100, 5, 10);
         }
 
         staticObjects = new StaticObject[2];
@@ -169,11 +169,11 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
 //        System.out.println(mouseH.x + ", " + mouseH.y);
 
-//        if (keyH.enterPressed) {
-//            keyH.enterPressed = false;
-//            springBodies = Arrays.copyOf(springBodies, springBodies.length + 1);
-//            springBodies[springBodies.length - 1] = defaultSpringBody.makeCopy();
-//        }
+        if (keyH.enterPressed) {
+            keyH.enterPressed = false;
+            springBodies = Arrays.copyOf(springBodies, springBodies.length + 1);
+            springBodies[springBodies.length - 1] = defaultSpringBody.makeCopy();
+        }
         if (keyH.rPressed) {
             keyH.rPressed = false;
             resetBodies();

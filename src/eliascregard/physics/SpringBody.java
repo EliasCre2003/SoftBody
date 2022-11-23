@@ -81,7 +81,9 @@ public class SpringBody {
         }
         Spring[] springs = new Spring[this.springs.length];
         for (int i = 0; i < this.springs.length; i++) {
-            springs[i] = this.springs[i].makeCopy();
+            int node1Index = Arrays.asList(this.nodes).indexOf(this.springs[i].node1);
+            int node2Index = Arrays.asList(this.nodes).indexOf(this.springs[i].node2);
+            springs[i] = new Spring(nodes[node1Index], nodes[node2Index], this.springs[i].stiffness, this.springs[i].dampingFactor);
         }
         return new SpringBody(nodes, springs, this.width, this.height);
     }
