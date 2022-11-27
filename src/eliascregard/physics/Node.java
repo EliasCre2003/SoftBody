@@ -136,7 +136,7 @@ public class Node {
             return;
         }
         direction.scale(1 / direction.length());
-        double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 2;
+        double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 8;
         this.position.add(direction, -correction);
         double p = (staticObject.restitutionCoefficient + 1) * this.velocity.dotProduct(direction);
         Vector2D pushVector = direction.makeCopy();
@@ -144,6 +144,10 @@ public class Node {
         this.velocity.subtract(pushVector);
 
 
+    }
+
+    public Circle getCircle() {
+        return new Circle(this.position, this.radius);
     }
 
     public Node makeCopy() {

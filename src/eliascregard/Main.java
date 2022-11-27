@@ -7,18 +7,27 @@ public class Main {
     public static GamePanel gamePanel;
     public static JFrame window;
     public static Dimension SCREEN_SIZE;
+
     public static void main(String[] args) {
+        boolean maximized = false;
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
         try {
-            SCREEN_SIZE = new Dimension(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+            if (args.length > 2) {
+                maximized = Boolean.parseBoolean(args[2]);
+                SCREEN_SIZE = toolkit.getScreenSize();
+            } else {
+                SCREEN_SIZE = new Dimension(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+            }
         } catch (Exception e) {
             SCREEN_SIZE = new Dimension(1600, 900);
         }
+        System.out.println("Screen size: " + SCREEN_SIZE.width + " x " + SCREEN_SIZE.height);
 
         window = new JFrame("Soft Body");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
-//        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        window.setUndecorated(false);
+        window.setResizable(true);
+        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        window.setUndecorated(maximized);
 
         gamePanel = new GamePanel();
         window.add(gamePanel);

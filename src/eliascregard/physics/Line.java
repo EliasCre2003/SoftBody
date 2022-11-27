@@ -58,13 +58,15 @@ public class Line {
     public static Vector2D closestPointOnLineToPoint(Line line, Vector2D point) {
         Vector2D P = line.point1;
         Vector2D Q = line.point2;
-        Vector2D v = new Vector2D(Q.x - P.x, Q.y - P.y);
-        double lambdaS = v.dotProduct(new Vector2D(point.x - P.x, point.y - P.y)) / v.dotProduct(v);
+        Vector2D v = Vector2D.difference(Q, P);
+        double lambdaS = v.dotProduct(Vector2D.difference(point, P)) / v.dotProduct(v);
         if (lambdaS <= 0) {
             return P.makeCopy();
-        } else if (lambdaS >= 1) {
+        }
+        if (lambdaS >= 1) {
             return Q.makeCopy();
         }
         return P.sum(v.scaled(lambdaS));
     }
+
 }

@@ -4,9 +4,11 @@ import eliascregard.input.*;
 import eliascregard.physics.*;
 import eliascregard.physics.Spring;
 
+import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Polygon;
+import java.awt.geom.Ellipse2D;
 import java.util.Arrays;
 
 
@@ -72,7 +74,7 @@ public class GamePanel extends JPanel implements Runnable {
             )
     };
 
-    boolean renderMode = true;
+    int renderMode = 0;
 
     void resetBodies() {
         springBodies = new SpringBody[0];
@@ -180,7 +182,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         if (keyH.tPressed) {
             keyH.tPressed = false;
-            renderMode = !renderMode;
+            renderMode = (renderMode + 1) % 3;
         }
 
         Vector2D movement = new Vector2D();
@@ -271,11 +273,15 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(new Color(0,0,0));
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
+        int totalNodes = 0;
+        int totalSprings = 0;
         for (SpringBody body : springBodies) {
             if (body == null) {
                 continue;
             }
-            if (renderMode) {
+            totalNodes += body.nodes.length;
+            totalSprings += body.springs.length;
+            if (renderMode == 0 || renderMode == 2) {
                 g2.setColor(new Color(255,255,255));
                 g2.setStroke(new BasicStroke((float) (3*SCREEN_SCALE)));
                 for (Spring spring : body.springs) {
@@ -284,11 +290,12 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
                 g2.setColor(new Color(255, 0, 0));
+
                 for (Node node : body.nodes) {
                     g2.fillOval((int)((node.position.x - node.radius)*SCREEN_SCALE), (int)((node.position.y - node.radius)*SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE));
                 }
             }
-            else {
+            if (renderMode == 1) {
                 g2.setColor(new Color(0,0,255));
                 Polygon polly = new Polygon();
                 for (int i = 0; i < body.height - 1; i++) {
@@ -305,9 +312,18 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 g2.fillPolygon(polly);
             }
+            if (renderMode == 2) {
+                g2.setColor(new Color(0,255,0));
+                for (Node node : body.nodes) {
+                    Point p1 = new Point((int)(node.position.x*SCREEN_SCALE), (int)(node.position.y*SCREEN_SCALE));
+                    Point p2 = new Point((int)((node.position.x + node.velocity.x * 0.1)*SCREEN_SCALE), (int)((node.position.y + node.velocity.y * 0.1)*SCREEN_SCALE));
+                    g2.drawLine(p1.x, p1.y, p2.x, p2.y);
+                }
+            }
         }
 
         g2.setColor(new Color(255,255,255));
+        g2.setStroke(new BasicStroke((float) (2*SCREEN_SCALE)));
         for (StaticObject staticObject : staticObjects) {
             if (staticObject == null) {
                 continue;
@@ -324,10 +340,14 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawPolygon(rigidBody.getPolygon(SCREEN_SCALE));
         }
 
-        g2.setColor(new Color(255, 255, 255));
-        g2.drawString("FPS: " + fps, 10, 20);
-        g2.drawString("Tickspeed: " + tickSpeed, 10, 40);
-
+        if (renderMode == 2) {
+            g2.setColor(new Color(255, 255, 255));
+            g2.drawString("FPS: " + fps, 10, 20);
+            g2.drawString("Tickspeed: " + tickSpeed, 10, 40);
+            g2.drawString("Gravity: " + gravity, 10, 60);
+            g2.drawString("Total Nodes: " + totalNodes, 10, 80);
+            g2.drawString("Total Springs: " + totalSprings, 10, 100);
+        }
 
         g2.dispose();
     }
