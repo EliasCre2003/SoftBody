@@ -9,8 +9,8 @@ public class Node {
     public Vector2D velocity;
     public double mass;
     public double radius;
-
     public Vector2D totalForceVector;
+    public Vector2D lastForceVector;
 
     public Node(Vector2D position, double mass, double radius) {
         this.position = position;
@@ -19,6 +19,7 @@ public class Node {
         this.mass = mass;
         this.radius = radius;
         this.totalForceVector = new Vector2D(0, 0);
+        this.lastForceVector = new Vector2D(0, 0);
     }
     public Node(Vector2D position) {
         this(position, 1, DEFAULT_NODE_RADIUS);
@@ -28,6 +29,7 @@ public class Node {
         Vector2D gravityVector = gravity.makeCopy();
         gravityVector.scale(this.mass);
         this.applyForce(gravityVector);
+        this.lastForceVector = this.totalForceVector.makeCopy();
         this.velocity.add(this.totalForceVector, deltaTime / this.mass);
         this.position.add(this.velocity, deltaTime);
         this.totalForceVector.set(0, 0);
@@ -106,7 +108,7 @@ public class Node {
 
     public void resolveCollision(StaticObject staticObject) {
         Line[] polygonLines = staticObject.getLines();
-        Line ray = new Line(this.position, new Vector2D(this.position.x + 10000, this.position.y));
+        Line ray = new Line(this.position, new Vector2D(this.position.x + 100000000, this.position.y));
         int intersections = 0;
         Vector2D[] closestPoints = new Vector2D[polygonLines.length];
         for (int i = 0; i < polygonLines.length; i++) {
@@ -136,7 +138,7 @@ public class Node {
             return;
         }
         direction.scale(1 / direction.length());
-        double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 8;
+        double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 10;
         this.position.add(direction, -correction);
         double p = (staticObject.restitutionCoefficient + 1) * this.velocity.dotProduct(direction);
         Vector2D pushVector = direction.makeCopy();

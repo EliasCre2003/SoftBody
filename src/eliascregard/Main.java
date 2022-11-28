@@ -14,7 +14,11 @@ public class Main {
         try {
             if (args.length > 2) {
                 maximized = Boolean.parseBoolean(args[2]);
-                SCREEN_SIZE = toolkit.getScreenSize();
+                if (maximized) {
+                    SCREEN_SIZE = toolkit.getScreenSize();
+                } else {
+                    SCREEN_SIZE = new Dimension(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+                }
             } else {
                 SCREEN_SIZE = new Dimension(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
             }
@@ -25,7 +29,7 @@ public class Main {
 
         window = new JFrame("Soft Body");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(true);
+        window.setResizable(false);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         window.setUndecorated(maximized);
 

@@ -8,7 +8,7 @@ public class Test {
         Scanner data = new Scanner(System.in);
         while (data.hasNextInt()) {
             int n = data.nextInt();
-            System.out.println((16*n) + " x " + (9*n));
+            System.out.println((16*n) + " " + (9*n));
         }
     }
 }

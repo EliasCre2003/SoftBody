@@ -1,6 +1,7 @@
 package eliascregard.interactives;
 
 import eliascregard.input.MouseHandler;
+import eliascregard.input.MouseMovementHandler;
 import eliascregard.physics.Vector2D;
 
 import java.awt.*;
@@ -10,7 +11,6 @@ public class Slider {
     public double value;
     public double min;
     public double max;
-    public double step;
     public double length;
     public boolean isPressed;
     public boolean isHorizontal;
@@ -20,13 +20,12 @@ public class Slider {
     public Vector2D circlePosition;
 
     public Slider(
-            double startValue, double min, double max, double step, double length, boolean isHorizontal,
+            double startValue, double min, double max, double length, boolean isHorizontal,
             Color circleColor, Color lineColor, Vector2D position
     ) {
         this.value = startValue;
         this.min = min;
         this.max = max;
-        this.step = step;
         this.length = length;
         this.isPressed = false;
         this.isHorizontal = isHorizontal;
@@ -36,30 +35,44 @@ public class Slider {
         this.circlePosition = calculateCirclePosition();
     }
 
-    public void update(MouseHandler mouse) {
+    public Slider(double startValue, double min, double max, boolean isHorizontal, Vector2D position) {
+        this(startValue, min, max, 100, isHorizontal, Color.WHITE, Color.WHITE, position);
+    }
+
+    public void update(MouseHandler mouseButton, MouseMovementHandler mousePosition) {
         if (this.isPressed) {
             if (this.isHorizontal) {
-                if (mouse.x < this.position.x) {
+                if (mousePosition.x < this.position.x) {
                     this.circlePosition.x = this.position.x;
-                } else if (mouse.x > this.position.x + this.length) {
+                } else if (mousePosition.x > this.position.x + this.length) {
                     this.circlePosition.x = this.position.x + this.length;
                 } else {
-                    this.circlePosition.x = mouse.x;
+                    this.circlePosition.x = mousePosition.x;
+                }
+                if (this.circlePosition.x > this.position.x + this.length) {
+                    this.circlePosition.x = this.position.x + this.length;
+                } else if (this.circlePosition.x < this.position.x) {
+                    this.circlePosition.x = this.position.x;
                 }
             } else {
-                if (mouse.y < this.position.y) {
+                if (mousePosition.y < this.position.y) {
                     this.circlePosition.y = this.position.y;
-                } else if (mouse.x > this.position.y + this.length) {
+                } else if (mousePosition.y > this.position.y + this.length) {
                     this.circlePosition.y = this.position.y + this.length;
                 } else {
-                    this.circlePosition.y = mouse.y;
+                    this.circlePosition.y = mousePosition.y;
+                }
+                if (this.circlePosition.y > this.position.y + this.length) {
+                    this.circlePosition.y = this.position.y + this.length;
+                } else if (this.circlePosition.y < this.position.y) {
+                    this.circlePosition.y = this.position.y;
                 }
             }
             this.value = calculateValue();
-        } else if (mouse.pressed) {
-            this.isPressed = this.circlePosition.distance(new Vector2D(mouse.x, mouse.y)) < 10;
+        } else if (mouseButton.pressed) {
+            this.isPressed = this.circlePosition.distance(new Vector2D(mousePosition.x, mousePosition.y)) < 10;
         }
-        if (!mouse.pressed) {
+        if (!mouseButton.pressed) {
             this.isPressed = false;
         }
     }
@@ -84,6 +97,23 @@ public class Slider {
         } else {
             return this.min + (this.circlePosition.y - this.position.y) / this.length * (this.max - this.min);
         }
+    }
+
+    public void draw(Graphics2D g2, double scale) {
+        g2.setColor(this.lineColor);
+        g2.setStroke(new BasicStroke((float) (3*scale)));
+        if (this.isHorizontal) {
+            g2.drawLine((int) (this.position.x * scale), (int) (this.position.y * scale), (int) ((this.position.x + this.length) * scale), (int) (this.position.y * scale));
+            g2.drawString("Value: " + this.value, (int) (this.position.x * scale), (int) ((this.position.y + 20) * scale));
+        } else {
+            g2.drawLine((int) (this.position.x * scale), (int) (this.position.y * scale), (int) (this.position.x * scale), (int) ((this.position.y + this.length) * scale));
+//            g2.drawString("Value: " + this.value, (int) (this.position.x * scale), (int) ((this.position.y + this.length + 20) * scale));
+        }
+        g2.setColor(this.circleColor);
+        g2.fillOval((int) ((this.circlePosition.x - 10) * scale), (int) ((this.circlePosition.y - 10) * scale), (int) (20 * scale), (int) (20 * scale));
+        g2.setColor(new Color(0, 0, 0));
+        g2.setStroke(new BasicStroke((float) (2*scale)));
+        g2.drawOval((int) ((this.circlePosition.x - 10) * scale), (int) ((this.circlePosition.y - 10) * scale), (int) (20 * scale), (int) (20 * scale));
     }
 
 }

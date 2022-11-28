@@ -22,4 +22,25 @@ public class MouseHandler extends MouseAdapter {
         x = e.getX();
         y = e.getY();
     }
+    public void mouseMoved(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
+    }
+
+    public void mouseExited(MouseEvent e) {
+        pressed = false;
+    }
+
+    public void mouseEntered(MouseEvent e) {
+        pressed = false;
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        pressed = false;
+    }
+
+    public void mouseWheelMoved(MouseEvent e) {
+        pressed = false;
+    }
+
 }
