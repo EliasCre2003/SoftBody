@@ -1,6 +1,6 @@
 package eliascregard.interactives;
 
-import eliascregard.input.MouseHandler;
+import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.physics.Vector2D;
 
@@ -39,7 +39,7 @@ public class Slider {
         this(startValue, min, max, 100, isHorizontal, Color.WHITE, Color.WHITE, position);
     }
 
-    public void update(MouseHandler mouseButton, MouseMovementHandler mousePosition) {
+    public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
         if (this.isPressed) {
             if (this.isHorizontal) {
                 if (mousePosition.x < this.position.x) {

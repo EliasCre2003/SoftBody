@@ -21,7 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
     int ticks = 0;
     GameTime time = new GameTime();
     KeyHandler keyH = new KeyHandler();
-    MouseHandler mouse = new MouseHandler();
+    MouseButtonHandler mouse = new MouseButtonHandler();
     MouseMovementHandler mouseMovement = new MouseMovementHandler(SCREEN_SCALE);
     double deltaT;
     public int tickSpeed;
