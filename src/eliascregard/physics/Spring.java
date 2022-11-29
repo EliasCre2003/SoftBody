@@ -7,6 +7,7 @@ public class Spring {
     public double stiffness;
     public double dampingFactor;
     public double restLength;
+    public double breakingForce;
 
     public Spring(Node node1, Node node2, double stiffness, double dampingFactor) {
         this.node1 = node1;

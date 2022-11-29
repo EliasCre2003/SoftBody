@@ -115,6 +115,7 @@ public class GamePanel extends JPanel implements Runnable {
             springBodies[i] = SpringBody.homogeneousRectangle(800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
                     8, 8, 1, 5000, 100, 5, 10);
         }
+        springBodies[0].nodes[0].fix();
 
         staticObjects = new StaticObject[2];
         staticObjects[0] = new StaticObject(

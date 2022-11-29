@@ -11,6 +11,7 @@ public class Node {
     public double radius;
     public Vector2D totalForceVector;
     public Vector2D lastForceVector;
+    private boolean isFixed;
 
     public Node(Vector2D position, double mass, double radius) {
         this.position = position;
@@ -20,18 +21,25 @@ public class Node {
         this.radius = radius;
         this.totalForceVector = new Vector2D(0, 0);
         this.lastForceVector = new Vector2D(0, 0);
+        this.isFixed = false;
+
     }
     public Node(Vector2D position) {
         this(position, 1, DEFAULT_NODE_RADIUS);
     }
 
     public void update(double deltaTime, Vector2D gravity) {
-        Vector2D gravityVector = gravity.makeCopy();
-        gravityVector.scale(this.mass);
-        this.applyForce(gravityVector);
-        this.lastForceVector = this.totalForceVector.makeCopy();
-        this.velocity.add(this.totalForceVector, deltaTime / this.mass);
-        this.position.add(this.velocity, deltaTime);
+        if (!this.isFixed) {
+            Vector2D gravityVector = gravity.makeCopy();
+            gravityVector.scale(this.mass);
+            this.applyForce(gravityVector);
+            this.lastForceVector = this.totalForceVector.makeCopy();
+            this.velocity.add(this.totalForceVector, deltaTime / this.mass);
+            this.position.add(this.velocity, deltaTime);
+        } else {
+            this.velocity.set(0, 0);
+            this.lastForceVector = this.totalForceVector.makeCopy();
+        }
         this.totalForceVector.set(0, 0);
     }
     public void update(double deltaTime) {
@@ -48,13 +56,15 @@ public class Node {
     }
 
     public void resolveCollision(Node otherNode) {
-
         double distance = Vector2D.distance(this.position, otherNode.position);
         Vector2D direction = Vector2D.difference(this.position, otherNode.position);
         direction.scale(1 / distance);
         double correction = (this.radius + otherNode.radius - distance) / 2;
         this.position.add(direction, correction);
         otherNode.position.add(direction, -correction);
+        if (this.isFixed && otherNode.isFixed) {
+            return;
+        }
         double p = 2 * (this.velocity.dotProduct(direction) - otherNode.velocity.dotProduct(direction)) / (this.mass + otherNode.mass);
         if (Double.isNaN(p)) {
             System.out.println("p is NaN");
@@ -92,6 +102,9 @@ public class Node {
     }
 
     public void resolveCollision(Line line, double deltaTime) {
+        if (this.isFixed) {
+            return;
+        }
         double lineAngle = Math.atan2(line.point2.y - line.point1.y, line.point2.x - line.point1.x);
         double velocityAngle = Math.atan2(this.velocity.y, this.velocity.x);
         double reflectionAngle = 2 * lineAngle - velocityAngle;
@@ -144,8 +157,13 @@ public class Node {
         Vector2D pushVector = direction.makeCopy();
         pushVector.scale(p);
         this.velocity.subtract(pushVector);
+    }
 
-
+    public void fix() {
+        this.isFixed = true;
+    }
+    public void unfix() {
+        this.isFixed = false;
     }
 
     public Circle getCircle() {
