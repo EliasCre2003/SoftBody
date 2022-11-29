@@ -49,11 +49,6 @@ public class Slider {
                 } else {
                     this.circlePosition.x = mousePosition.x;
                 }
-                if (this.circlePosition.x > this.position.x + this.length) {
-                    this.circlePosition.x = this.position.x + this.length;
-                } else if (this.circlePosition.x < this.position.x) {
-                    this.circlePosition.x = this.position.x;
-                }
             } else {
                 if (mousePosition.y < this.position.y) {
                     this.circlePosition.y = this.position.y;
@@ -61,11 +56,6 @@ public class Slider {
                     this.circlePosition.y = this.position.y + this.length;
                 } else {
                     this.circlePosition.y = mousePosition.y;
-                }
-                if (this.circlePosition.y > this.position.y + this.length) {
-                    this.circlePosition.y = this.position.y + this.length;
-                } else if (this.circlePosition.y < this.position.y) {
-                    this.circlePosition.y = this.position.y;
                 }
             }
             this.value = calculateValue();

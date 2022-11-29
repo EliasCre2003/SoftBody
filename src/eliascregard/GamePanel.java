@@ -2,6 +2,7 @@ package eliascregard;
 
 import eliascregard.input.*;
 import eliascregard.interactives.Slider;
+import eliascregard.interactives.Slider2D;
 import eliascregard.physics.*;
 import eliascregard.physics.Spring;
 
@@ -74,10 +75,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     int renderMode = 2;
 
-    Slider gravitySlider = new Slider(0, -500, 1500, 100, false,
-            new Color(255, 0, 0), new Color(255,255,255), new Vector2D(DEFAULT_SCREEN_SIZE.width - 15, 100));
-
-    public Vector2D gravity = new Vector2D(0, gravitySlider.value);
+    Slider2D gravitySlider = new Slider2D(new Vector2D(0, 500), -1000, 1000, -1000, 1000,
+            new Dimension(200, 200), new Color(255, 0, 0), new Color(255,255,255), new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 15));
+    public Vector2D gravity = gravitySlider.value;
 
     void resetBodies() {
         springBodies = new SpringBody[0];
@@ -238,15 +238,15 @@ public class GamePanel extends JPanel implements Runnable {
         for (SpringBody body : springBodies) {
             body.update(deltaT, gravity);
         }
-        for (RigidBody rigidBody : rigidBodies) {
-            if (deltaT > 0) {
-                rigidBody.applyForce(movement.scaled(1/deltaT), new Vector2D(50, 50));
-            }
-            rigidBody.update(deltaT, gravity);
-        }
+//        for (RigidBody rigidBody : rigidBodies) {
+//            if (deltaT > 0) {
+//                rigidBody.applyForce(movement.scaled(1/deltaT), new Vector2D(50, 50));
+//            }
+//            rigidBody.update(deltaT, gravity);
+//        }
 
         gravitySlider.update(mouse, mouseMovement);
-        gravity.set(0, gravitySlider.value);
+        gravity.set(gravitySlider.value);
 
     }
 
@@ -317,13 +317,13 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         g2.setColor(new Color(0, 255, 0));
-        for (RigidBody rigidBody : rigidBodies) {
-            if (rigidBody == null) {
-                System.out.println("null");
-                continue;
-            }
-            g2.drawPolygon(rigidBody.getPolygon(SCREEN_SCALE));
-        }
+//        for (RigidBody rigidBody : rigidBodies) {
+//            if (rigidBody == null) {
+//                System.out.println("null");
+//                continue;
+//            }
+//            g2.drawPolygon(rigidBody.getPolygon(SCREEN_SCALE));
+//        }
 
         gravitySlider.draw(g2, SCREEN_SCALE);
 
