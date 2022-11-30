@@ -243,7 +243,7 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                     }
                 }
-                if (mouse.pressed) {
+                if (mouse.leftIsPressed) {
                     if (node.position.distance(new Vector2D(mouseMovement.x, mouseMovement.y)) < node.radius) {
                         node.position.set(mouseMovement.x, mouseMovement.y);
                     }

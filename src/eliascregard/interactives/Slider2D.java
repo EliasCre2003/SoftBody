@@ -67,10 +67,10 @@ public class Slider2D {
                 this.circlePosition.y = mousePosition.y;
             }
             this.value = calculateValue();
-        } else if (mouseButton.pressed) {
+        } else if (mouseButton.leftIsPressed) {
             this.isPressed = this.circlePosition.distance(new Vector2D(mousePosition.x, mousePosition.y)) < 10;
         }
-        if (!mouseButton.pressed) {
+        if (!mouseButton.leftIsPressed) {
             this.isPressed = false;
         }
     }

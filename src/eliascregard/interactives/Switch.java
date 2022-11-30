@@ -23,7 +23,7 @@ public class Switch {
     }
 
     public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
-        if (mouseButton.pressed) {
+        if (mouseButton.leftIsPressed) {
             if (this.position.distance(new Vector2D(mousePosition.x, mousePosition.y)) < 10) {
                 this.isOn = !this.isOn;
             }

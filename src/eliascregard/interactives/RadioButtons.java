@@ -2,7 +2,6 @@ package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
-import eliascregard.physics.Vector2D;
 
 public class RadioButtons {
 
@@ -15,7 +14,7 @@ public class RadioButtons {
     }
 
     public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
-        if (!mouseButton.pressed) {
+        if (!mouseButton.leftIsPressed) {
             return;
         }
         for (Switch s : this.switches) {

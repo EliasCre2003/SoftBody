@@ -5,14 +5,23 @@ import java.awt.event.MouseEvent;
 
 public class MouseButtonHandler extends MouseAdapter {
 
-    public boolean pressed = false;
+    public boolean leftIsPressed = false;
+    public boolean rightIsPressed = false;
 
     public void mousePressed(MouseEvent e) {
-        pressed = true;
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            leftIsPressed = true;
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            rightIsPressed = true;
+        }
     }
 
     public void mouseReleased(MouseEvent e) {
-        pressed = false;
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            leftIsPressed = false;
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            rightIsPressed = false;
+        }
     }
 
 }
