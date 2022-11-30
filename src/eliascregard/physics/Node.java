@@ -120,8 +120,10 @@ public class Node {
     }
 
     public void resolveCollision(StaticObject staticObject) {
+
+        // CHECKS IF THE NODE IS INSIDE THE PERIMETER OF THE STATIC OBJECT
         Line[] polygonLines = staticObject.getLines();
-        Line ray = new Line(this.position, new Vector2D(this.position.x + 100000000, this.position.y));
+        Line ray = new Line(this.position, new Vector2D(this.position.x + Integer.MAX_VALUE, this.position.y));
         int intersections = 0;
         Vector2D[] closestPoints = new Vector2D[polygonLines.length];
         for (int i = 0; i < polygonLines.length; i++) {
@@ -134,31 +136,36 @@ public class Node {
         if (intersections % 2 == 0) {
             return;
         }
-        Vector2D closestPoint = null;
-        double closestDistance = Double.MAX_VALUE;
-        for (Vector2D intersectionPoint : closestPoints) {
-            if (intersectionPoint == null) {
-                continue;
-            }
-            double distance = Vector2D.distance(this.position, intersectionPoint);
+        // FINDS THE CLOSEST POINT ON THE STATIC OBJECTS PERIMETER TO THE NODE
+        Vector2D closestPoint = closestPoints[0];
+        double closestDistance = Vector2D.distance(this.position, closestPoint);
+        for (int i = 1; i < closestPoints.length; i++) {
+            double distance = Vector2D.distance(this.position, closestPoints[i]);
             if (distance < closestDistance) {
                 closestDistance = distance;
-                closestPoint = intersectionPoint;
+                closestPoint = closestPoints[i];
             }
         }
+
+        // FINALLY RESOLVES THE COLLISION
         Vector2D direction = Vector2D.difference(this.position, closestPoint);
         if (direction.length() == 0) {
             return;
         }
+        this.position.set(closestPoint);
         direction.scale(1 / direction.length());
-        double correction = (this.radius - Vector2D.distance(this.position, closestPoint)) / 10;
-        this.position.add(direction, -correction);
-        double p = (staticObject.restitutionCoefficient + 1) * this.velocity.dotProduct(direction);
-        Vector2D pushVector = direction.makeCopy();
-        pushVector.scale(p);
+        double p = (staticObject.restitutionCoefficient) * this.velocity.dotProduct(direction) * 2;
+        Vector2D pushVector = direction.scaled(p);
         this.velocity.subtract(pushVector);
     }
 
+    public void fix(double x, double y) {
+        this.position.set(x, y);
+        this.isFixed = true;
+    }
+    public void fix(Vector2D position) {
+        this.fix(position.x, position.y);
+    }
     public void fix() {
         this.isFixed = true;
     }

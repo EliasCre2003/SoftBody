@@ -25,7 +25,7 @@ public class Main {
         } catch (Exception e) {
             SCREEN_SIZE = new Dimension(1600, 900);
         }
-        System.out.println("Screen size: " + SCREEN_SIZE.width + " x " + SCREEN_SIZE.height);
+        System.out.println("Window size: " + SCREEN_SIZE.width + " x " + SCREEN_SIZE.height);
 
         window = new JFrame("Soft Body");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

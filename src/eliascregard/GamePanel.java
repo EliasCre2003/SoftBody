@@ -31,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     SpringBody[] springBodies;
     SpringBody defaultSpringBody = SpringBody.homogeneousRectangle(800,  0,
-            8, 8, 1, 1000, 100, 5, 10);
+            8, 8, 1, 10000000, 1000, 5, 10);
     StaticObject[] staticObjects;
     RigidBody[] rigidBodies;
     final StaticObject[] screenBounds = new StaticObject[] {
@@ -47,18 +47,18 @@ public class GamePanel extends JPanel implements Runnable {
             new StaticObject(
                     new Vector2D[] {
                             new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, -1000),
-                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height),
-                            new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height + 1),
+                            new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height + 1),
                             new Vector2D(DEFAULT_SCREEN_SIZE.width, 0)
                     },
                     1, 1
             ),
             new StaticObject(
                     new Vector2D[] {
-                            new Vector2D(0, DEFAULT_SCREEN_SIZE.height + 1000),
+                            new Vector2D(-1, DEFAULT_SCREEN_SIZE.height + 1000),
                             new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height + 1000),
                             new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height),
-                            new Vector2D(0, DEFAULT_SCREEN_SIZE.height)
+                            new Vector2D(-1, DEFAULT_SCREEN_SIZE.height)
                     },
                     1, 1
             ),
@@ -243,19 +243,17 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                     }
                 }
-
+                if (mouse.pressed) {
+                    if (node.position.distance(new Vector2D(mouseMovement.x, mouseMovement.y)) < node.radius) {
+                        node.position.set(mouseMovement.x, mouseMovement.y);
+                    }
+                }
             }
         }
 
         for (SpringBody body : springBodies) {
             body.update(deltaT, gravity);
         }
-//        for (RigidBody rigidBody : rigidBodies) {
-//            if (deltaT > 0) {
-//                rigidBody.applyForce(movement.scaled(1/deltaT), new Vector2D(50, 50));
-//            }
-//            rigidBody.update(deltaT, gravity);
-//        }
 
         gravitySlider.update(mouse, mouseMovement);
         gravity.set(gravitySlider.value);
@@ -288,7 +286,7 @@ public class GamePanel extends JPanel implements Runnable {
                         g2.drawLine((int)(spring.node1.position.x*SCREEN_SCALE), (int)(spring.node1.position.y*SCREEN_SCALE), (int)(spring.node2.position.x*SCREEN_SCALE), (int)(spring.node2.position.y*SCREEN_SCALE));
                     }
                 }
-                g2.setColor(new Color(255, 0, 0));
+                g2.setColor(new Color(0, 0, 255));
 
                 for (Node node : body.nodes) {
                     g2.fillOval((int)((node.position.x - node.radius)*SCREEN_SCALE), (int)((node.position.y - node.radius)*SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE));
