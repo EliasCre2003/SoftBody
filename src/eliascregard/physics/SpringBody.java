@@ -22,7 +22,7 @@ public class SpringBody {
         }
         for (Spring spring : this.springs) {
             spring.update();
-            if (spring.getLength() > 2 * spring.restLength) {
+            if (spring.getLength() > 4 * spring.restLength) {
                 this.removeSpring(spring);
             }
         }

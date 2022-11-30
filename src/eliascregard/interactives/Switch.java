@@ -1,5 +1,7 @@
 package eliascregard.interactives;
 
+import eliascregard.input.MouseButtonHandler;
+import eliascregard.input.MouseMovementHandler;
 import eliascregard.physics.Vector2D;
 
 import java.awt.*;
@@ -11,17 +13,24 @@ public class Switch {
     public String text;
     public boolean isFilled;
     public boolean isOn;
+    public Vector2D position;
 
-    public Switch(Shape shape, Color color, String text, boolean isFilled) {
+    public Switch(Shape shape, Color color, String text, boolean isFilled, Vector2D position) {
         this.shape = shape;
         this.color = color;
         this.text = text;
         this.isFilled = isFilled;
         this.isOn = false;
+        this.position = position;
+
     }
 
-    public void update(Vector2D mousePosition) {
-        this.isOn = this.shape.contains(mousePosition.x, mousePosition.y);
+    public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
+        if (mouseButton.pressed) {
+            if (this.shape.contains(mousePosition.x, mousePosition.y)) {
+                this.isOn = !this.isOn;
+            }
+        }
     }
 
     public void draw(Graphics2D g2) {

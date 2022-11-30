@@ -25,9 +25,9 @@ public class GamePanel extends JPanel implements Runnable {
     MouseButtonHandler mouse = new MouseButtonHandler();
     MouseMovementHandler mouseMovement = new MouseMovementHandler(SCREEN_SCALE);
     double deltaT;
-    public int tickSpeed;
+    int tickSpeed;
     double renderDeltaT = 0;
-    public int fps;
+    int fps;
 
     SpringBody[] springBodies;
     SpringBody defaultSpringBody = SpringBody.homogeneousRectangle(800,  0,
@@ -75,16 +75,26 @@ public class GamePanel extends JPanel implements Runnable {
 
     int renderMode = 2;
 
-    Slider2D gravitySlider = new Slider2D(new Vector2D(0, 500), -1000, 1000, -1000, 1000,
-            new Dimension(200, 200), new Color(255, 0, 0), new Color(255,255,255), new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 15));
-    public Vector2D gravity = gravitySlider.value;
+    Slider2D gravitySlider = new Slider2D(
+            new Vector2D(0, 500), -1000, 1000, -1000, 1000,
+            new Dimension(200, 200), new Color(255, 0, 0), new Color(255,255,255),
+            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 15)
+    );
+    Vector2D gravity = gravitySlider.value;
+
+    Slider timeMultiplierSlider = new Slider(
+            1, 0, 2, 200, true,
+            new Color(255,0,0), new Color(255,255,255),
+            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 230)
+    );
+    double timeMultiplier = timeMultiplierSlider.value;
 
     void resetBodies() {
         springBodies = new SpringBody[0];
         rigidBodies = new RigidBody[0];
     }
 
-    void wait(int milliseconds) {
+    void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
@@ -112,10 +122,10 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
         springBodies = new SpringBody[1];
         for (int i = 0; i < springBodies.length; i++) {
-            springBodies[i] = SpringBody.homogeneousRectangle(800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
+            springBodies[i] = SpringBody.homogeneousRectangle(
+                    800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
                     8, 8, 1, 5000, 100, 5, 10);
         }
-        springBodies[0].nodes[0].fix();
 
         staticObjects = new StaticObject[2];
         staticObjects[0] = new StaticObject(
@@ -152,6 +162,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (ticks == 0) {deltaT = 0;}
             tickSpeed = time.getFPS(deltaT);
             renderDeltaT += deltaT;
+            deltaT *= timeMultiplier;
             if (MAX_FRAME_RATE == 0) {
                 fps = time.getFPS(deltaT);
             }
@@ -248,6 +259,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         gravitySlider.update(mouse, mouseMovement);
         gravity.set(gravitySlider.value);
+        timeMultiplierSlider.update(mouse, mouseMovement);
+        timeMultiplier = timeMultiplierSlider.value;
 
     }
 
@@ -327,8 +340,11 @@ public class GamePanel extends JPanel implements Runnable {
 //        }
 
         gravitySlider.draw(g2, SCREEN_SCALE);
+        timeMultiplierSlider.draw(g2, SCREEN_SCALE);
 
         if (renderMode == 2) {
+            g2.setColor(new Color(0,0,0,0.5f));
+            g2.fillRect(0,0, 240, 120);
             g2.setColor(new Color(255, 255, 255));
             g2.drawString("FPS: " + fps, 10, 20);
             g2.drawString("Tickspeed: " + tickSpeed, 10, 40);
