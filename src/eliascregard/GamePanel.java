@@ -188,21 +188,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(new Color(50, 50, 50));
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
-        SpringBody[] springBodies = mainSpace.getSpringBodies();
-        int totalNodes = 0;
-        int totalSprings = 0;
         mainSpace.draw(g2, SCREEN_SCALE, renderMode);
-
-
-        StaticObject[] staticObjects = mainSpace.getStaticObjects();
-        g2.setColor(new Color(255,255,255));
-        g2.setStroke(new BasicStroke((float) (2*SCREEN_SCALE)));
-        for (StaticObject staticObject : staticObjects) {
-            if (staticObject == null) {
-                continue;
-            }
-            g2.drawPolygon(staticObject.getPolygon(SCREEN_SCALE));
-        }
 
         gravitySlider.draw(g2, SCREEN_SCALE);
         timeMultiplierSlider.draw(g2, SCREEN_SCALE);
@@ -216,8 +202,8 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("FPS: " + fps, 10, 20);
             g2.drawString("Tickspeed: " + tickSpeed, 10, 40);
             g2.drawString("Gravity: " + mainSpace.getGravity(), 10, 60);
-            g2.drawString("Total Nodes: " + totalNodes, 10, 80);
-            g2.drawString("Total Springs: " + totalSprings, 10, 100);
+            g2.drawString("Total Nodes: " + mainSpace.getTotalNodes(), 10, 80);
+            g2.drawString("Total Springs: " + mainSpace.getTotalSprings(), 10, 100);
         }
 
         g2.dispose();

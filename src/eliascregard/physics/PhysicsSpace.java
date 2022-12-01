@@ -19,6 +19,9 @@ public class PhysicsSpace {
     private StaticObject boundary = null;
     private final Vector2D movement = new Vector2D();
 
+    private int totalNodes = 0;
+    private int totalSprings = 0;
+
     public PhysicsSpace() {
     }
 
@@ -116,6 +119,8 @@ public class PhysicsSpace {
     public void addSpringBody(SpringBody springBody) {
         this.springBodies = Arrays.copyOf(this.springBodies, this.springBodies.length + 1);
         this.springBodies[this.springBodies.length - 1] = springBody;
+        totalNodes += springBody.nodes.length;
+        totalSprings += springBody.springs.length;
     }
 
     public void addStaticObject(StaticObject staticObject) {
@@ -123,8 +128,12 @@ public class PhysicsSpace {
         this.staticObjects[this.staticObjects.length - 1] = staticObject;
     }
 
-    public void removeSpringBody() {
-        this.springBodies = Arrays.copyOf(this.springBodies, this.springBodies.length - 1);
+    public void removeSpringBody(SpringBody springBody) {
+        totalNodes -= springBody.nodes.length;
+        totalSprings -= springBody.springs.length;
+        int index = Arrays.asList(this.springBodies).indexOf(springBody);
+        if (this.staticObjects.length - index - 1 >= 0)
+            System.arraycopy(this.springBodies, index + 1, this.springBodies, index, this.springBodies.length - index - 1);
     }
 
     public void removeStaticObject(StaticObject staticObject) {
@@ -143,6 +152,13 @@ public class PhysicsSpace {
 
     public void resetSpringBodies() {
         this.springBodies = new SpringBody[0];
+    }
+
+    public int getTotalNodes() {
+        return totalNodes;
+    }
+    public int getTotalSprings() {
+        return totalSprings;
     }
 
     public void draw(Graphics2D g2, double scale, int renderingMode) {
