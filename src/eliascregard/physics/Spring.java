@@ -44,7 +44,7 @@ public class Spring {
     }
 
 
-    public void draw(Graphics2D g2, double scale) {
+    public void render(Graphics2D g2, double scale) {
         g2.setColor(new Color(255,255,255));
         g2.setStroke(new BasicStroke((float) (3*scale)));
         g2.drawLine((int)(this.node1.position.x*scale), (int)(this.node1.position.y*scale), (int)(this.node2.position.x*scale), (int)(this.node2.position.y*scale));

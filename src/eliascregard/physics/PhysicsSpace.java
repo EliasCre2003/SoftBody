@@ -161,12 +161,12 @@ public class PhysicsSpace {
         return totalSprings;
     }
 
-    public void draw(Graphics2D g2, double scale, int renderingMode) {
+    public void render(Graphics2D g2, double scale, int renderingMode) {
         for (SpringBody body : springBodies) {
-            body.draw(g2, scale, renderingMode);
+            body.render(g2, scale, renderingMode);
         }
         for (StaticObject staticObject : staticObjects) {
-            staticObject.draw(g2, scale);
+            staticObject.render(g2, scale);
         }
     }
 

@@ -188,16 +188,17 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(new Color(50, 50, 50));
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
-        mainSpace.draw(g2, SCREEN_SCALE, renderMode);
 
-        gravitySlider.draw(g2, SCREEN_SCALE);
-        timeMultiplierSlider.draw(g2, SCREEN_SCALE);
-        tickDelaySwitch.draw(g2, SCREEN_SCALE);
-        zeroGravityButton.draw(g2, SCREEN_SCALE);
+        mainSpace.render(g2, SCREEN_SCALE, renderMode);
+
+        gravitySlider.render(g2, SCREEN_SCALE);
+        timeMultiplierSlider.render(g2, SCREEN_SCALE);
+        tickDelaySwitch.render(g2, SCREEN_SCALE);
+        zeroGravityButton.render(g2, SCREEN_SCALE);
 
         if (renderMode == 2) {
             g2.setColor(new Color(0,0,0,0.5f));
-            g2.fillRect(0,0, 240, 120);
+            g2.fillRect(0,0, 200, 120);
             g2.setColor(new Color(255, 255, 255));
             g2.drawString("FPS: " + fps, 10, 20);
             g2.drawString("Tickspeed: " + tickSpeed, 10, 40);

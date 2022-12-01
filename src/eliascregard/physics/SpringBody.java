@@ -89,13 +89,13 @@ public class SpringBody {
         return new SpringBody(nodes, springs, this.width, this.height);
     }
 
-    public void draw(Graphics2D g2, double scale, int renderingMode) {
+    public void render(Graphics2D g2, double scale, int renderingMode) {
         if (renderingMode == 0 || renderingMode == 2) {
             for (Spring spring : this.springs) {
-                spring.draw(g2, scale);
+                spring.render(g2, scale);
             }
             for (Node node : this.nodes) {
-                node.draw(g2, scale);
+                node.render(g2, scale);
             }
         }
         if (renderingMode == 2) {
@@ -106,7 +106,7 @@ public class SpringBody {
                 g2.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
         }
-        if(renderingMode == 1) {
+        else if (renderingMode == 1) {
             g2.setColor(new Color(0,0,255));
             Polygon polly = new Polygon();
             for (int i = 0; i < this.height - 1; i++) {

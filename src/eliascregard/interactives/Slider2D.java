@@ -80,7 +80,7 @@ public class Slider2D {
         }
     }
 
-    public void draw(Graphics2D g2, double scale) {
+    public void render(Graphics2D g2, double scale) {
         g2.setColor(new Color(0, 0, 0, 0.5f));
         g2.fillRect((int) (this.position.x * scale), (int) (this.position.y * scale), (int) (this.size.width * scale), (int) (this.size.height * scale));
 //        g2.setColor(this.frameColor);

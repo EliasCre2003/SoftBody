@@ -31,7 +31,7 @@ public class Switch {
         }
     }
 
-    public void draw(Graphics2D g2, double scale) {
+    public void render(Graphics2D g2, double scale) {
         g2.setColor(this.outlineColor);
         g2.setStroke(new BasicStroke((float) (1*scale)));
         g2.drawOval((int) ((this.position.x) * scale), (int) ((this.position.y) * scale), (int) (20 * scale), (int) (20 * scale));

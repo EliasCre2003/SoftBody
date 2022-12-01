@@ -89,7 +89,7 @@ public class Slider {
         }
     }
 
-    public void draw(Graphics2D g2, double scale) {
+    public void render(Graphics2D g2, double scale) {
         g2.setColor(this.lineColor);
         g2.setStroke(new BasicStroke((float) (3*scale)));
         if (this.isHorizontal) {
