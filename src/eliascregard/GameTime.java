@@ -37,4 +37,30 @@ public class GameTime {
         }
         return 0;
     }
+
+    public static double secondsToNanoSeconds(double seconds) {
+        return seconds * NANO_TIME_CONVERTER_CONSTANT;
+    }
+
+    public static double nanoSecondsToSeconds(double nanoSeconds) {
+        return nanoSeconds / NANO_TIME_CONVERTER_CONSTANT;
+    }
+
+    public static double secondsToMilliSeconds(double seconds) {
+        return seconds * 1000;
+    }
+
+    public static double milliSecondsToSeconds(double milliSeconds) {
+        return milliSeconds / 1000;
+    }
+
+    public static double milliSecondsToNanoSeconds(double milliSeconds) {
+        return milliSeconds * 1_000_000;
+    }
+
+    public static double nanoSecondsToMilliSeconds(double nanoSeconds) {
+        return nanoSeconds / 1_000_000;
+    }
+
+
 }

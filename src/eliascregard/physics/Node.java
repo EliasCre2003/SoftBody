@@ -35,6 +35,10 @@ public class Node {
             this.applyForce(gravityVector);
             this.lastForceVector = this.totalForceVector.makeCopy();
             this.velocity.add(this.totalForceVector, deltaTime / this.mass);
+            if (this.velocity.length() > 10000) {
+                this.velocity.normalize();
+                this.velocity.scale(10000);
+            }
             this.position.add(this.velocity, deltaTime);
         } else {
             this.velocity.set(0, 0);
@@ -153,9 +157,9 @@ public class Node {
             return;
         }
         this.position.set(closestPoint);
-        direction.scale(1 / direction.length());
-        double p = (staticObject.restitutionCoefficient) * this.velocity.dotProduct(direction) * 2;
-        Vector2D pushVector = direction.scaled(p);
+        direction.normalize();
+        double push = ((staticObject.restitutionCoefficient + 1) * this.velocity.dotProduct(direction));
+        Vector2D pushVector = direction.scaled(push);
         this.velocity.subtract(pushVector);
     }
 
