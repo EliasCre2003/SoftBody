@@ -78,4 +78,10 @@ public class StaticObject {
         }
     }
 
+    public void draw(Graphics2D g2, double scale) {
+        g2.setColor(new Color(255,255,255));
+        g2.setStroke(new BasicStroke((float) (2*scale)));
+        g2.draw(getPolygon(scale));
+    }
+
 }

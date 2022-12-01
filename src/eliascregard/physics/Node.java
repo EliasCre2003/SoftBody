@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import java.awt.*;
+
 public class Node {
 
     final public static double DEFAULT_NODE_RADIUS = 11;
@@ -184,6 +186,12 @@ public class Node {
     public Node makeCopy() {
         return new Node(this.position.makeCopy(), this.mass, this.radius);
     }
+
+    public void draw(Graphics2D g2, double scale) {
+        g2.setColor(new Color(0, 0, 255));
+        g2.fillOval((int)((this.position.x - this.radius)*scale), (int)((this.position.y - this.radius)*scale), (int) (this.radius * 2 * scale), (int) (this.radius * 2 * scale));
+    }
+
 
 
 

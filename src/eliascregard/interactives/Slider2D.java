@@ -50,6 +50,11 @@ public class Slider2D {
         return new Vector2D(x, y);
     }
 
+    public void setValue(Vector2D value) {
+        this.value = value;
+        this.circlePosition = calculateCirclePosition();
+    }
+
     public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
         if (this.isPressed) {
             if (mousePosition.x < this.position.x) {
@@ -76,8 +81,10 @@ public class Slider2D {
     }
 
     public void draw(Graphics2D g2, double scale) {
-        g2.setColor(this.frameColor);
-        g2.drawRect((int) (this.position.x * scale), (int) (this.position.y * scale), (int) (this.size.width * scale), (int) (this.size.height * scale));
+        g2.setColor(new Color(0, 0, 0, 0.5f));
+        g2.fillRect((int) (this.position.x * scale), (int) (this.position.y * scale), (int) (this.size.width * scale), (int) (this.size.height * scale));
+//        g2.setColor(this.frameColor);
+//        g2.drawRect((int) (this.position.x * scale), (int) (this.position.y * scale), (int) (this.size.width * scale), (int) (this.size.height * scale));
         g2.setColor(this.circleColor);
         g2.fillOval((int) ((this.circlePosition.x - 10) * scale), (int) ((this.circlePosition.y - 10) * scale), (int) (20 * scale), (int) (20 * scale));
     }

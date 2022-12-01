@@ -4,13 +4,11 @@ import eliascregard.input.*;
 import eliascregard.interactives.Slider;
 import eliascregard.interactives.Slider2D;
 import eliascregard.interactives.Switch;
+import eliascregard.interactives.Button;
 import eliascregard.physics.*;
-import eliascregard.physics.Spring;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Polygon;
-import java.util.Arrays;
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -32,31 +30,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     PhysicsSpace mainSpace = new PhysicsSpace();
 
-    SpringBody[] springBodies;
-    SpringBody defaultSpringBody = SpringBody.homogeneousRectangle(800,  0,
-            8, 8, 1, 10000000, 1000, 5, 10);
-    StaticObject[] staticObjects;
-    RigidBody[] rigidBodies;
-    final StaticObject[] screenBounds = new StaticObject[] {
-
-            new StaticObject(
-                    new Vector2D[] {
-                            new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, -1000),
-                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, -1000),
-                            new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height + 1000),
-                            new Vector2D(-1000, DEFAULT_SCREEN_SIZE.height + 1000),
-                            new Vector2D(-1000, -1000),
-                            new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, -1000),
-                            new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, 0),
-                            new Vector2D(0, 0),
-                            new Vector2D(0, DEFAULT_SCREEN_SIZE.height),
-                            new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height),
-                            new Vector2D(DEFAULT_SCREEN_SIZE.width, 0),
-                            new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, 0)
-                    }, 1, 1
-            )
-    };
-
     int renderMode = 2;
 
     Slider2D gravitySlider = new Slider2D(
@@ -64,7 +37,6 @@ public class GamePanel extends JPanel implements Runnable {
             new Dimension(200, 200), new Color(255, 0, 0), new Color(255,255,255),
             new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 15)
     );
-    Vector2D gravity = gravitySlider.value;
 
     Slider timeMultiplierSlider = new Slider(
             1, 0, 2, 200, true,
@@ -75,17 +47,18 @@ public class GamePanel extends JPanel implements Runnable {
 
     Switch tickDelaySwitch = new Switch(
             new Color(255, 255, 255), new Color(0, 255, 0), "Tick Delay",
-            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 345)
+            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 260)
     );
 
-    void resetBodies() {
-        springBodies = new SpringBody[0];
-        rigidBodies = new RigidBody[0];
-    }
+    Button zeroGravityButton = new Button(
+            new Color(255, 255, 255), new Color(255, 0, 0), "Zero Gravity",
+            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 290)
+    );
 
-    void sleep(int nanoseonds) {
+    void sleep(int nanoseconds) {
         try {
-            Thread.sleep(0, nanoseonds);
+
+            Thread.sleep((long) GameTime.nanoSecondsToMilliSeconds(nanoseconds), nanoseconds % 1_000_000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -109,15 +82,26 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        springBodies = new SpringBody[1];
-        for (int i = 0; i < springBodies.length; i++) {
-            springBodies[i] = SpringBody.homogeneousRectangle(
-                    800 + ((i%7) * 250), 4 + (double) (i / 7) * 250,
-                    8, 8, 1, 5000, 100, 5, 10);
-        }
 
-        staticObjects = new StaticObject[2];
-        staticObjects[0] = new StaticObject(
+        mainSpace.setGravity(gravitySlider.value);
+        mainSpace.setBoundary(new StaticObject(
+                new Vector2D[] {
+                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, -1000),
+                        new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, -1000),
+                        new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height + 1000),
+                        new Vector2D(-1000, DEFAULT_SCREEN_SIZE.height + 1000),
+                        new Vector2D(-1000, -1000),
+                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, -1000),
+                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, 0),
+                        new Vector2D(0, 0),
+                        new Vector2D(0, DEFAULT_SCREEN_SIZE.height),
+                        new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height),
+                        new Vector2D(DEFAULT_SCREEN_SIZE.width, 0),
+                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, 0)
+                }, 1, 1
+        ));
+
+        mainSpace.addStaticObject(new StaticObject(
                 new Vector2D[] {
                         new Vector2D(100, 100),
                         new Vector2D(200, 100),
@@ -125,8 +109,8 @@ public class GamePanel extends JPanel implements Runnable {
                         new Vector2D(100, 200)
                 },
                 0, 1
-        );
-        staticObjects[1] = new StaticObject(
+        ));
+        mainSpace.addStaticObject(new StaticObject(
                 new Vector2D[] {
                         new Vector2D(300, 100),
                         new Vector2D(400, 300),
@@ -134,20 +118,11 @@ public class GamePanel extends JPanel implements Runnable {
                         new Vector2D(300, 300)
                 },
                 0,1
-        );
-        rigidBodies = new RigidBody[1];
-        rigidBodies[0] = new RigidBody(
-                new Vector2D(
-                        500,
-                        100
-                ),
-                100, 100, 1, 0
-        );
+        ));
 
-
-
+        double lastDelay = 0;
         while (gameThread != null) {
-            deltaTime = time.getDeltaTime();
+            deltaTime = time.getDeltaTime() - GameTime.nanoSecondsToSeconds(lastDelay);
             if (ticks == 0) {
                 deltaTime = 0;}
             tickSpeed = time.getFPS(deltaTime);
@@ -161,7 +136,11 @@ public class GamePanel extends JPanel implements Runnable {
                 System.exit(0);
             }
             if (tickDelaySwitch.isOn) {
-                sleep(100);
+                sleep(1_000_000_000);
+                lastDelay = 1_000_000_000;
+            }
+            else {
+                lastDelay = 0;
             }
             update();
             ticks++;
@@ -179,79 +158,25 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
 
-        if (keyH.enterPressed) {
-            keyH.enterPressed = false;
-            springBodies = Arrays.copyOf(springBodies, springBodies.length + 1);
-            springBodies[springBodies.length - 1] = defaultSpringBody.makeCopy();
-        }
-        if (keyH.rPressed) {
-            keyH.rPressed = false;
-            resetBodies();
-        }
         if (keyH.tPressed) {
             keyH.tPressed = false;
             renderMode = (renderMode + 1) % 3;
         }
 
-        Vector2D movement = new Vector2D();
-        if (keyH.rightPressed) {
-            keyH.rightPressed = false;
-            movement.x += 1000;
-        }
-        if (keyH.leftPressed) {
-            keyH.leftPressed = false;
-            movement.x -= 1000;
-        }
-        if (keyH.upPressed) {
-            keyH.upPressed = false;
-            movement.y -= 1000;
-        }
-        if (keyH.downPressed) {
-            keyH.downPressed = false;
-            movement.y += 1000;
-        }
-
-        for (SpringBody body : springBodies) {
-            for (Node node : body.nodes) {
-
-                node.velocity.add(movement);
-
-                for (StaticObject staticObject : staticObjects) {
-                    if (node.insidePerimeter(staticObject)) {
-                        node.resolveCollision(staticObject);
-                    }
-                }
-
-                for (StaticObject bound : screenBounds) {
-                    if (node.insidePerimeter(bound)) {
-                        node.resolveCollision(bound);
-                    }
-                }
-
-                for (SpringBody otherBody : springBodies) {
-                    for (Node otherNode : otherBody.nodes) {
-                        if (node.isColliding(otherNode) && node != otherNode) {
-                            node.resolveCollision(otherNode);
-                        }
-                    }
-                }
-                if (mouse.leftIsPressed) {
-                    if (node.position.distance(new Vector2D(mouseMovement.x, mouseMovement.y)) < node.radius) {
-                        node.position.set(mouseMovement.x, mouseMovement.y);
-                    }
-                }
-            }
-        }
-
-        for (SpringBody body : springBodies) {
-            body.update(deltaTime, gravity);
-        }
+        mainSpace.update(deltaTime, keyH, mouse, mouseMovement);
 
         gravitySlider.update(mouse, mouseMovement);
-        gravity.set(gravitySlider.value);
+        mainSpace.setGravity(gravitySlider.value);
         timeMultiplierSlider.update(mouse, mouseMovement);
         timeMultiplier = timeMultiplierSlider.value;
         tickDelaySwitch.update(mouse, mouseMovement);
+        zeroGravityButton.update(mouse, mouseMovement);
+        if (zeroGravityButton.isPressed) {
+            System.out.println("Zero Gravity");
+            Vector2D newGravity = new Vector2D(0, 0);
+            gravitySlider.setValue(newGravity);
+            mainSpace.setGravity(newGravity);
+        }
 
     }
 
@@ -263,55 +188,13 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setColor(new Color(50, 50, 50));
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
 
+        SpringBody[] springBodies = mainSpace.getSpringBodies();
         int totalNodes = 0;
         int totalSprings = 0;
-        for (SpringBody body : springBodies) {
-            if (body == null) {
-                continue;
-            }
-            totalNodes += body.nodes.length;
-            totalSprings += body.springs.length;
-            if (renderMode == 0 || renderMode == 2) {
-                g2.setColor(new Color(255,255,255));
-                g2.setStroke(new BasicStroke((float) (3*SCREEN_SCALE)));
-                for (Spring spring : body.springs) {
-                    if (spring != null) {
-                        g2.drawLine((int)(spring.node1.position.x*SCREEN_SCALE), (int)(spring.node1.position.y*SCREEN_SCALE), (int)(spring.node2.position.x*SCREEN_SCALE), (int)(spring.node2.position.y*SCREEN_SCALE));
-                    }
-                }
-                g2.setColor(new Color(0, 0, 255));
+        mainSpace.draw(g2, SCREEN_SCALE, renderMode);
 
-                for (Node node : body.nodes) {
-                    g2.fillOval((int)((node.position.x - node.radius)*SCREEN_SCALE), (int)((node.position.y - node.radius)*SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE), (int) (node.radius * 2 * SCREEN_SCALE));
-                }
-            }
-            if (renderMode == 1) {
-                g2.setColor(new Color(0,0,255));
-                Polygon polly = new Polygon();
-                for (int i = 0; i < body.height - 1; i++) {
-                    polly.addPoint((int)((body.nodes[i].position.x)*SCREEN_SCALE), (int)((body.nodes[i].position.y)*SCREEN_SCALE));
-                }
-                for (int i = 1; i < body.width; i++) {
-                    polly.addPoint((int)((body.nodes[i * body.height - 1].position.x)*SCREEN_SCALE), (int)((body.nodes[i * body.height - 1].position.y)*SCREEN_SCALE));
-                }
-                for (int i = 1; i < body.height; i++) {
-                    polly.addPoint((int)((body.nodes[body.nodes.length - i].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i].position.y)*SCREEN_SCALE));
-                }
-                for (int i = 1; i < body.width; i++) {
-                    polly.addPoint((int)((body.nodes[body.nodes.length - i * body.height].position.x)*SCREEN_SCALE), (int)((body.nodes[body.nodes.length - i * body.height].position.y)*SCREEN_SCALE));
-                }
-                g2.fillPolygon(polly);
-            }
-            if (renderMode == 2) {
-                g2.setColor(new Color(0,255,0));
-                for (Node node : body.nodes) {
-                    Point p1 = new Point((int)(node.position.x*SCREEN_SCALE), (int)(node.position.y*SCREEN_SCALE));
-                    Point p2 = new Point((int)((node.position.x + node.velocity.x * 0.1)*SCREEN_SCALE), (int)((node.position.y + node.velocity.y * 0.1)*SCREEN_SCALE));
-                    g2.drawLine(p1.x, p1.y, p2.x, p2.y);
-                }
-            }
-        }
 
+        StaticObject[] staticObjects = mainSpace.getStaticObjects();
         g2.setColor(new Color(255,255,255));
         g2.setStroke(new BasicStroke((float) (2*SCREEN_SCALE)));
         for (StaticObject staticObject : staticObjects) {
@@ -321,18 +204,10 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawPolygon(staticObject.getPolygon(SCREEN_SCALE));
         }
 
-        g2.setColor(new Color(0, 255, 0));
-//        for (RigidBody rigidBody : rigidBodies) {
-//            if (rigidBody == null) {
-//                System.out.println("null");
-//                continue;
-//            }
-//            g2.drawPolygon(rigidBody.getPolygon(SCREEN_SCALE));
-//        }
-
         gravitySlider.draw(g2, SCREEN_SCALE);
         timeMultiplierSlider.draw(g2, SCREEN_SCALE);
         tickDelaySwitch.draw(g2, SCREEN_SCALE);
+        zeroGravityButton.draw(g2, SCREEN_SCALE);
 
         if (renderMode == 2) {
             g2.setColor(new Color(0,0,0,0.5f));
@@ -340,7 +215,7 @@ public class GamePanel extends JPanel implements Runnable {
             g2.setColor(new Color(255, 255, 255));
             g2.drawString("FPS: " + fps, 10, 20);
             g2.drawString("Tickspeed: " + tickSpeed, 10, 40);
-            g2.drawString("Gravity: " + gravity, 10, 60);
+            g2.drawString("Gravity: " + mainSpace.getGravity(), 10, 60);
             g2.drawString("Total Nodes: " + totalNodes, 10, 80);
             g2.drawString("Total Springs: " + totalSprings, 10, 100);
         }

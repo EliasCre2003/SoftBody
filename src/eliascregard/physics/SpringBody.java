@@ -1,5 +1,6 @@
 package eliascregard.physics;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class SpringBody {
@@ -86,6 +87,42 @@ public class SpringBody {
             springs[i] = new Spring(nodes[node1Index], nodes[node2Index], this.springs[i].stiffness, this.springs[i].dampingFactor);
         }
         return new SpringBody(nodes, springs, this.width, this.height);
+    }
+
+    public void draw(Graphics2D g2, double scale, int renderingMode) {
+        if (renderingMode == 0 || renderingMode == 2) {
+            for (Spring spring : this.springs) {
+                spring.draw(g2, scale);
+            }
+            for (Node node : this.nodes) {
+                node.draw(g2, scale);
+            }
+        }
+        if (renderingMode == 2) {
+            g2.setColor(new Color(0,255,0));
+            for (Node node : this.nodes) {
+                Point p1 = new Point((int)(node.position.x*scale), (int)(node.position.y*scale));
+                Point p2 = new Point((int)((node.position.x + node.velocity.x * 0.1)*scale), (int)((node.position.y + node.velocity.y * 0.1)*scale));
+                g2.drawLine(p1.x, p1.y, p2.x, p2.y);
+            }
+        }
+        if(renderingMode == 1) {
+            g2.setColor(new Color(0,0,255));
+            Polygon polly = new Polygon();
+            for (int i = 0; i < this.height - 1; i++) {
+                polly.addPoint((int)((this.nodes[i].position.x)*scale), (int)((this.nodes[i].position.y)*scale));
+            }
+            for (int i = 1; i < this.width; i++) {
+                polly.addPoint((int)((this.nodes[i * this.height - 1].position.x)*scale), (int)((this.nodes[i * this.height - 1].position.y)*scale));
+            }
+            for (int i = 1; i < this.height; i++) {
+                polly.addPoint((int)((this.nodes[this.nodes.length - i].position.x)*scale), (int)((this.nodes[this.nodes.length - i].position.y)*scale));
+            }
+            for (int i = 1; i < this.width; i++) {
+                polly.addPoint((int)((this.nodes[this.nodes.length - i * this.height].position.x)*scale), (int)((this.nodes[this.nodes.length - i * this.height].position.y)*scale));
+            }
+            g2.fillPolygon(polly);
+        }
     }
 
 }

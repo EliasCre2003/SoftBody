@@ -4,12 +4,13 @@ import eliascregard.input.KeyHandler;
 import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class PhysicsSpace {
 
     private final static SpringBody DEFAULT_SPRING_BODY = SpringBody.homogeneousRectangle(
-            800,  0, 8, 8, 1, 100000, 1000, 5, 10
+            800,  0, 8, 8, 1, 1000, 100, 5, 10
     );
 
     private Vector2D gravity = new Vector2D();
@@ -60,10 +61,23 @@ public class PhysicsSpace {
 
     public void update(double deltaTime, KeyHandler keys, MouseButtonHandler mouseButtons, MouseMovementHandler mouseMovement) {
         handleInput(keys, mouseButtons, mouseMovement);
-        update(deltaTime);
+        if (deltaTime > 0) {
+            update(deltaTime);
+        }
     }
 
     private void handleInput(KeyHandler keys, MouseButtonHandler mouseButtons, MouseMovementHandler mouseMovement) {
+        if (keys.enterPressed) {
+            keys.enterPressed = false;
+            addSpringBody(DEFAULT_SPRING_BODY.makeCopy());
+            Vector2D node1Position = DEFAULT_SPRING_BODY.nodes[0].position;
+            for (Node node : springBodies[springBodies.length - 1].nodes) {
+                double deltaX = node.position.x - node1Position.x;
+                double deltaY = node.position.y - node1Position.y;
+                node.position.set(mouseMovement.x + deltaX, mouseMovement.y + deltaY);
+            }
+        }
+
         if (keys.rPressed) {
             keys.rPressed = false;
             resetSpringBodies();
@@ -129,6 +143,15 @@ public class PhysicsSpace {
 
     public void resetSpringBodies() {
         this.springBodies = new SpringBody[0];
+    }
+
+    public void draw(Graphics2D g2, double scale, int renderingMode) {
+        for (SpringBody body : springBodies) {
+            body.draw(g2, scale, renderingMode);
+        }
+        for (StaticObject staticObject : staticObjects) {
+            staticObject.draw(g2, scale);
+        }
     }
 
 
