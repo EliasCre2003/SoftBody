@@ -1,7 +1,5 @@
 package eliascregard.input;
 
-import eliascregard.physics.Vector2D;
-
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 

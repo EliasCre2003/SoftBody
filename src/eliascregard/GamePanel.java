@@ -1,10 +1,7 @@
 package eliascregard;
 
 import eliascregard.input.*;
-import eliascregard.interactives.Slider;
-import eliascregard.interactives.Slider2D;
-import eliascregard.interactives.Switch;
-import eliascregard.interactives.Button;
+import eliascregard.interactives.*;
 import eliascregard.physics.*;
 
 import javax.swing.*;
@@ -50,9 +47,9 @@ public class GamePanel extends JPanel implements Runnable {
             new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 260)
     );
 
-    Button zeroGravityButton = new Button(
+    CircularButton zeroGravityButton = new CircularButton(
             new Color(255, 255, 255), new Color(255, 0, 0), "Zero Gravity",
-            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 290)
+            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 290), 10
     );
 
     void sleep(int nanoseconds) {
@@ -171,7 +168,7 @@ public class GamePanel extends JPanel implements Runnable {
         timeMultiplier = timeMultiplierSlider.value;
         tickDelaySwitch.update(mouse, mouseMovement);
         zeroGravityButton.update(mouse, mouseMovement);
-        if (zeroGravityButton.isPressed) {
+        if (zeroGravityButton.getState()) {
             System.out.println("Zero Gravity");
             Vector2D newGravity = new Vector2D(0, 0);
             gravitySlider.setValue(newGravity);

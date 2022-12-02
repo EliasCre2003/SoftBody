@@ -3,6 +3,8 @@ package eliascregard.interactives;
 import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
 
+import java.awt.*;
+
 public class RadioButtons {
 
     public Switch[] switches;
@@ -31,6 +33,12 @@ public class RadioButtons {
                 }
                 return;
             }
+        }
+    }
+
+    public void render(Graphics2D g2, double scale) {
+        for (Switch s : this.switches) {
+            s.render(g2, scale);
         }
     }
 

@@ -37,12 +37,12 @@ public class StaticObject {
     }
 
     public double[] getPerimeter() {
-        double[] perimiter = new double[4];
-        double maxX = -Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-        for (int i = 0; i < vertices.length; i++) {
+        double[] perimeter = new double[4];
+        double maxX = perimeter[0];
+        double maxY = perimeter[0];
+        double minX = perimeter[0];
+        double minY = perimeter[0];
+        for (int i = 1; i < vertices.length; i++) {
             if (vertices[i].x > maxX) {
                 maxX = vertices[i].x;
             }
@@ -56,11 +56,11 @@ public class StaticObject {
                 minY = vertices[i].y;
             }
         }
-        perimiter[0] = maxX;
-        perimiter[1] = maxY;
-        perimiter[2] = minX;
-        perimiter[3] = minY;
-        return perimiter;
+        perimeter[0] = maxX;
+        perimeter[1] = maxY;
+        perimeter[2] = minX;
+        perimeter[3] = minY;
+        return perimeter;
     }
 
     public void move(Vector2D delta) {
