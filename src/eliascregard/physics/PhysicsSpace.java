@@ -10,13 +10,13 @@ import java.util.Arrays;
 public class PhysicsSpace {
 
     private final static SpringBody DEFAULT_SPRING_BODY = SpringBody.homogeneousRectangle(
-            800,  0, 8, 8, 1, 1000, 100, 6, 10
+            800,  0, 1, 2, 10, 100, 1, 200, 10
     );
 
     private Vector2D gravity = new Vector2D();
     private SpringBody[] springBodies = new SpringBody[0];
     private StaticObject[] staticObjects = new StaticObject[0];
-    private StaticObject boundary = null;
+    private Boundary boundary = null;
     private final Vector2D movement = new Vector2D();
 
     private int totalNodes = 0;
@@ -35,8 +35,11 @@ public class PhysicsSpace {
 
                 node.velocity.add(movement);
 
-                if (boundary != null && node.insidePerimeter(boundary)) {
-                    node.resolveCollision(boundary);
+                if (boundary != null) {
+                    if (node.position.x > boundary.position.x + boundary.width || node.position.x < boundary.position.x
+                            || node.position.y > boundary.position.y + boundary.height || node.position.y < boundary.position.y) {
+                        node.resolveCollision(boundary);
+                    }
                 }
 
                 for (StaticObject staticObject : staticObjects) {
@@ -112,7 +115,7 @@ public class PhysicsSpace {
         return this.gravity;
     }
 
-    public void setBoundary(StaticObject boundary) {
+    public void setBoundary(Boundary boundary) {
         this.boundary = boundary;
     }
 

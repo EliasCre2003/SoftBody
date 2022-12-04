@@ -17,7 +17,6 @@ public class Node {
 
     public Node(Vector2D position, double mass, double radius) {
         this.position = position;
-        this.previousPosition = position.makeCopy();
         this.velocity = new Vector2D(0, 0);
         this.mass = mass;
         this.radius = radius;
@@ -192,7 +191,8 @@ public class Node {
         g2.fillOval((int)((this.position.x - this.radius)*scale), (int)((this.position.y - this.radius)*scale), (int) (this.radius * 2 * scale), (int) (this.radius * 2 * scale));
     }
 
-
-
+    public String toString() {
+        return "position: (" + this.position.toString() + "), velocity: (" + this.velocity.toString() + "), mass: " + this.mass + ", radius: " + this.radius;
+    }
 
 }

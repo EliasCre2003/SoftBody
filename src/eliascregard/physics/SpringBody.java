@@ -40,7 +40,6 @@ public class SpringBody {
                                                   double spacing, double nodeRadius) {
         Node[] nodes = new Node[width * height];
         Spring[] springs = new Spring[(width - 1) * height + (height-1) * width + (height - 1) * (width - 1) * 2];
-        if (y < 0) {y = 0;}
 
         int nodeIndex = 0;
         int springIndex = 0;

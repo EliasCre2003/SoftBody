@@ -1,4 +1,4 @@
-package eliascregard;
+package eliascregard.main;
 
 public class GameTime {
 

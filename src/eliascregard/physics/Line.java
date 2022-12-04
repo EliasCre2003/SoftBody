@@ -17,14 +17,10 @@ public class Line {
     }
 
     public static Vector2D lineLineIntersection(Line line1, Line line2) {
-        double x1 = line1.point1.x;
-        double y1 = line1.point1.y;
-        double x2 = line1.point2.x;
-        double y2 = line1.point2.y;
-        double x3 = line2.point1.x;
-        double y3 = line2.point1.y;
-        double x4 = line2.point2.x;
-        double y4 = line2.point2.y;
+        double x1 = line1.point1.x, y1 = line1.point1.y;
+        double x2 = line1.point2.x, y2 = line1.point2.y;
+        double x3 = line2.point1.x, y3 = line2.point1.y;
+        double x4 = line2.point2.x, y4 = line2.point2.y;
 
         double denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
         if (denominator == 0) {

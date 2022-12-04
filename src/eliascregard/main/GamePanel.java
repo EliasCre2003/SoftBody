@@ -1,7 +1,8 @@
-package eliascregard;
+package eliascregard.main;
 
 import eliascregard.input.*;
 import eliascregard.interactives.*;
+import eliascregard.interactives.ButtonGroup;
 import eliascregard.physics.*;
 
 import javax.swing.*;
@@ -13,12 +14,11 @@ public class GamePanel extends JPanel implements Runnable {
     final Dimension DEFAULT_SCREEN_SIZE = new Dimension(1920, 1080);
     final double SCREEN_SCALE = (double) SCREEN_SIZE.width / DEFAULT_SCREEN_SIZE.width;
     int MAX_FRAME_RATE = 200;
-    int MAX_TICKSPEED = 0;
     public Thread gameThread;
     int ticks = 0;
     GameTime time = new GameTime();
-    KeyHandler keyH = new KeyHandler();
-    MouseButtonHandler mouse = new MouseButtonHandler();
+    KeyHandler keys = new KeyHandler();
+    MouseButtonHandler mouseButtons = new MouseButtonHandler();
     MouseMovementHandler mouseMovement = new MouseMovementHandler(SCREEN_SCALE);
     double deltaTime;
     int tickSpeed;
@@ -27,7 +27,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     PhysicsSpace mainSpace = new PhysicsSpace();
 
-    int renderMode = 2;
+    int renderMode = 0;
 
     Slider2D gravitySlider = new Slider2D(
             new Vector2D(0, 500), -1000, 1000, -1000, 1000,
@@ -48,9 +48,11 @@ public class GamePanel extends JPanel implements Runnable {
     );
 
     CircularButton zeroGravityButton = new CircularButton(
-            new Color(255, 255, 255), new Color(255, 0, 0), "Zero Gravity",
-            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 290), 10
+            "Zero Gravity", new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 290),
+            new Color(255, 255, 255), new Color(255, 0, 0), 10
     );
+
+    ButtonGroup rightClickMenu = new ButtonGroup(new Vector2D(0,0));
 
     void sleep(int nanoseconds) {
         try {
@@ -70,8 +72,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setPreferredSize(SCREEN_SIZE);
         this.setBackground(new Color(0, 0, 0));
         this.setDoubleBuffered(true);
-        this.addKeyListener(keyH);
-        this.addMouseListener(mouse);
+        this.addKeyListener(keys);
+        this.addMouseListener(mouseButtons);
         this.addMouseMotionListener(mouseMovement);
         this.setFocusable(true);
     }
@@ -81,22 +83,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
 
         mainSpace.setGravity(gravitySlider.value);
-        mainSpace.setBoundary(new StaticObject(
-                new Vector2D[] {
-                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, -1000),
-                        new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, -1000),
-                        new Vector2D(DEFAULT_SCREEN_SIZE.width + 1000, DEFAULT_SCREEN_SIZE.height + 1000),
-                        new Vector2D(-1000, DEFAULT_SCREEN_SIZE.height + 1000),
-                        new Vector2D(-1000, -1000),
-                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, -1000),
-                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, 0),
-                        new Vector2D(0, 0),
-                        new Vector2D(0, DEFAULT_SCREEN_SIZE.height),
-                        new Vector2D(DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height),
-                        new Vector2D(DEFAULT_SCREEN_SIZE.width, 0),
-                        new Vector2D((double) DEFAULT_SCREEN_SIZE.width / 2, 0)
-                }, 1, 1
-        ));
+        mainSpace.setBoundary(new Boundary(new Vector2D(0, 0), DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height, 100000, 1, 1));
 
         mainSpace.addStaticObject(new StaticObject(
                 new Vector2D[] {
@@ -117,6 +104,10 @@ public class GamePanel extends JPanel implements Runnable {
                 0,1
         ));
 
+        rightClickMenu.setVisibility(false);
+        rightClickMenu.addButton(new RectangularButton("Reset", new Vector2D(0,0), new Color(25,25,25),
+                new Dimension(150, 35), true));
+
         double lastDelay = 0;
         while (gameThread != null) {
             deltaTime = time.getDeltaTime() - GameTime.nanoSecondsToSeconds(lastDelay);
@@ -129,7 +120,7 @@ public class GamePanel extends JPanel implements Runnable {
                 fps = time.getFPS(deltaTime);
             }
 
-            if (keyH.escapePressed) {
+            if (keys.escapePressed) {
                 System.exit(0);
             }
             if (tickDelaySwitch.isOn) {
@@ -155,24 +146,35 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
 
-        if (keyH.tPressed) {
-            keyH.tPressed = false;
+        if (keys.tPressed) {
+            keys.tPressed = false;
             renderMode = (renderMode + 1) % 3;
         }
 
-        mainSpace.update(deltaTime, keyH, mouse, mouseMovement);
+        mainSpace.update(deltaTime, keys, mouseButtons, mouseMovement);
 
-        gravitySlider.update(mouse, mouseMovement);
+        gravitySlider.update(mouseButtons, mouseMovement);
         mainSpace.setGravity(gravitySlider.value);
-        timeMultiplierSlider.update(mouse, mouseMovement);
+        timeMultiplierSlider.update(mouseButtons, mouseMovement);
         timeMultiplier = timeMultiplierSlider.value;
-        tickDelaySwitch.update(mouse, mouseMovement);
-        zeroGravityButton.update(mouse, mouseMovement);
+        tickDelaySwitch.update(mouseButtons, mouseMovement);
+        zeroGravityButton.update(mouseButtons, mouseMovement);
         if (zeroGravityButton.getState()) {
-            System.out.println("Zero Gravity");
             Vector2D newGravity = new Vector2D(0, 0);
             gravitySlider.setValue(newGravity);
             mainSpace.setGravity(newGravity);
+        }
+        if (mouseButtons.leftIsPressed) {
+            rightClickMenu.setVisibility(false);
+        }
+        if (mouseButtons.rightIsPressed) {
+            mouseButtons.rightIsPressed = false;
+            rightClickMenu.setVisibility(true);
+            rightClickMenu.setPosition(mouseMovement.x, mouseMovement.y);
+        }
+        rightClickMenu.update(mouseButtons, mouseMovement);
+        if (rightClickMenu.rectangularButtons[0].getState()) {
+            mainSpace.resetSpringBodies();
         }
 
     }
@@ -181,10 +183,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
-
         g2.setColor(new Color(50, 50, 50));
         g2.fillRect(0, 0, SCREEN_SIZE.width, SCREEN_SIZE.height);
-
 
         mainSpace.render(g2, SCREEN_SCALE, renderMode);
 
@@ -192,6 +192,7 @@ public class GamePanel extends JPanel implements Runnable {
         timeMultiplierSlider.render(g2, SCREEN_SCALE);
         tickDelaySwitch.render(g2, SCREEN_SCALE);
         zeroGravityButton.render(g2, SCREEN_SCALE);
+        rightClickMenu.render(g2, SCREEN_SCALE);
 
         if (renderMode == 2) {
             g2.setColor(new Color(0,0,0,0.5f));

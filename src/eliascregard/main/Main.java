@@ -1,7 +1,8 @@
-package eliascregard;
+package eliascregard.main;
 
 import javax.swing.JFrame;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
 public class Main {
     public static GamePanel gamePanel;

@@ -8,9 +8,13 @@ import java.awt.*;
 public class CircularButton extends Button {
 
     private double radius;
+    private Color outlineColor;
+    private Color insideColor;
 
-    public CircularButton(Color outlineColor, Color insideColor, String label, Vector2D position, double radius) {
-        super(outlineColor, insideColor, label, position);
+    public CircularButton(String label, Vector2D position, Color outlineColor, Color insideColor, double radius) {
+        super(label, position);
+        this.outlineColor = outlineColor;
+        this.insideColor = insideColor;
         this.radius = radius;
     }
 
@@ -21,13 +25,28 @@ public class CircularButton extends Button {
     public double getRadius() {
         return this.radius;
     }
-
     public void setRadius(double radius) {
         this.radius = radius;
     }
 
+    public void setOutlineColor(Color outlineColor) {
+        this.outlineColor = outlineColor;
+    }
+    public void setInsideColor(Color insideColor) {
+        this.insideColor = insideColor;
+    }
+    public Color getOutlineColor() {
+        return this.outlineColor;
+    }
+    public Color getInsideColor() {
+        return this.insideColor;
+    }
+
 
     public void render(Graphics2D g2, double scale) {
+        if (!this.isVisible()) {
+            return;
+        }
         double colorMultiplier = 1;
         if (this.mouseIsOver) {
             colorMultiplier = 0.8;

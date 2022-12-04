@@ -4,25 +4,18 @@ import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.physics.Vector2D;
 
-import java.awt.*;
-
 class Button {
 
-    Color outlineColor;
-    Color insideColor;
     String label;
-    boolean isPressed;
+    boolean isPressed = false;
     Vector2D position;
-    boolean mouseIsOver;
+    boolean mouseIsOver = false;
+    private boolean isVisible = true;
 
-
-    Button(Color outlineColor, Color insideColor, String label, Vector2D position) {
-        this.outlineColor = outlineColor;
-        this.insideColor = insideColor;
+    Button(String label, Vector2D position) {
         this.label = label;
-        this.isPressed = false;
         this.position = position;
-        this.mouseIsOver = false;
+
     }
 
     public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
@@ -30,7 +23,6 @@ class Button {
         if (this.mouseIsOver(mousePosition)) {
             this.mouseIsOver = true;
             if (mouseButton.leftIsPressed) {
-                System.out.println("Button pressed");
                 mouseButton.leftIsPressed = false;
                 this.isPressed = true;
             }
@@ -54,8 +46,15 @@ class Button {
     public void setPosition(Vector2D position) {
         this.position = position;
     }
-
     public Vector2D getPosition() {
         return this.position;
     }
+    public void setVisibility(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
+    public boolean isVisible() {
+        return this.isVisible;
+    }
+
+
 }

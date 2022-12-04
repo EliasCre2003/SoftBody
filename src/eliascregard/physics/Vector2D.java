@@ -124,28 +124,6 @@ public class Vector2D {
         return distance(this, vector2);
     }
 
-    public void debug(String label) {
-        if (!label.equals("")) {
-            label += " | ";
-        }
-        System.out.println(label + "x: " + this.x + ", y: " + this.y);
-    }
-    public void debug() {
-        this.debug("");
-    }
-
-    public static void debug(String label, Vector2D[] vectors) {
-        if (label != null) {
-            System.out.println(label);
-        }
-        for (Vector2D vector : vectors) {
-            vector.debug();
-        }
-    }
-    public static void debug(Vector2D[] vectors) {
-        debug(null, vectors);
-    }
-
     public String toString() {
         return "x: " + this.x + ", y: " + this.y;
     }

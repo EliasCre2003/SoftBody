@@ -29,7 +29,7 @@ public class Spring {
         Vector2D directionVector = Vector2D.difference(node1.position, node2.position).normalized();
         Vector2D deltaVelocity = Vector2D.difference(node1.velocity, node2.velocity);
         double force = springForce + deltaVelocity.dotProduct(directionVector) * this.dampingFactor;
-        Vector2D forceVector = directionVector.makeCopy().scaled(force);
+        Vector2D forceVector = directionVector.scaled(force);
         node2.applyForce(forceVector);
         node1.applyForce(forceVector.negated());
 
@@ -47,6 +47,6 @@ public class Spring {
     public void render(Graphics2D g2, double scale) {
         g2.setColor(new Color(255,255,255));
         g2.setStroke(new BasicStroke((float) (3*scale)));
-        g2.drawLine((int)(this.node1.position.x*scale), (int)(this.node1.position.y*scale), (int)(this.node2.position.x*scale), (int)(this.node2.position.y*scale));
+        g2.drawLine((int)(this.node1.position.x*scale), (int)(this.node1.position.y*scale), (int)(this.node2.position.x*scale), (int)(this.node2.position.y*scale   ));
     }
 }

@@ -38,10 +38,10 @@ public class StaticObject {
 
     public double[] getPerimeter() {
         double[] perimeter = new double[4];
-        double maxX = perimeter[0];
-        double maxY = perimeter[0];
-        double minX = perimeter[0];
-        double minY = perimeter[0];
+        double maxX = vertices[0].x;
+        double maxY = vertices[0].y;
+        double minX = vertices[0].x;
+        double minY = vertices[0].y;
         for (int i = 1; i < vertices.length; i++) {
             if (vertices[i].x > maxX) {
                 maxX = vertices[i].x;
