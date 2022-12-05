@@ -10,51 +10,45 @@ import java.awt.*;
 
 
 public class GamePanel extends JPanel implements Runnable {
-    final Dimension SCREEN_SIZE = Main.SCREEN_SIZE;
-    final Dimension DEFAULT_SCREEN_SIZE = new Dimension(1920, 1080);
-    final double SCREEN_SCALE = (double) SCREEN_SIZE.width / DEFAULT_SCREEN_SIZE.width;
-    int MAX_FRAME_RATE = 200;
-    public Thread gameThread;
+    private Dimension SCREEN_SIZE = Main.SCREEN_SIZE;
+    private final Dimension DEFAULT_SCREEN_SIZE = new Dimension(1920, 1080);
+    private double SCREEN_SCALE = (double) SCREEN_SIZE.width / DEFAULT_SCREEN_SIZE.width;
+    private int MAX_FRAME_RATE = 200;
+    private Thread gameThread;
     int ticks = 0;
-    GameTime time = new GameTime();
-    KeyHandler keys = new KeyHandler();
-    MouseButtonHandler mouseButtons = new MouseButtonHandler();
-    MouseMovementHandler mouseMovement = new MouseMovementHandler(SCREEN_SCALE);
-    double deltaTime;
-    int tickSpeed;
-    double renderDeltaT = 0;
-    int fps;
+    private final GameTime time = new GameTime();
+    private final KeyHandler keys = new KeyHandler();
+    private final MouseButtonHandler mouseButtons = new MouseButtonHandler();
+    private final MouseMovementHandler mouseMovement = new MouseMovementHandler(SCREEN_SCALE);
+    private double deltaTime;
+    private int tickSpeed;
+    private double renderDeltaT = 0;
+    private int fps;
 
-    PhysicsSpace mainSpace = new PhysicsSpace();
+    private int renderMode = 0;
 
-    int renderMode = 0;
-
-    Slider2D gravitySlider = new Slider2D(
+    private final Slider2D gravitySlider = new Slider2D(
             new Vector2D(0, 500), -1000, 1000, -1000, 1000,
             new Dimension(200, 200), new Color(255, 0, 0), new Color(255,255,255),
             new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 15)
     );
+    private final PhysicsSpace mainSpace = new PhysicsSpace(gravitySlider.value);
 
-    Slider timeMultiplierSlider = new Slider(
+    private final Slider timeMultiplierSlider = new Slider(
             1, 0, 2, 200, true,
             new Color(255,0,0), new Color(255,255,255),
             new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 230)
     );
-    double timeMultiplier = timeMultiplierSlider.value;
+    private double timeMultiplier = timeMultiplierSlider.value;
 
-    Switch tickDelaySwitch = new Switch(
-            new Color(255, 255, 255), new Color(0, 255, 0), "Tick Delay",
-            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 260)
-    );
-
-    CircularButton zeroGravityButton = new CircularButton(
-            "Zero Gravity", new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 290),
+    private final CircularButton zeroGravityButton = new CircularButton(
+            "Zero Gravity", new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 260),
             new Color(255, 255, 255), new Color(255, 0, 0), 10
     );
 
-    ButtonGroup rightClickMenu = new ButtonGroup(new Vector2D(0,0));
+    private final ButtonGroup rightClickMenu = new ButtonGroup(new Vector2D(0,0));
 
-    void sleep(int nanoseconds) {
+    private void sleep(int nanoseconds) {
         try {
 
             Thread.sleep((long) GameTime.nanoSecondsToMilliSeconds(nanoseconds), nanoseconds % 1_000_000);
@@ -108,9 +102,8 @@ public class GamePanel extends JPanel implements Runnable {
         rightClickMenu.addButton(new RectangularButton("Reset", new Vector2D(0,0), new Color(25,25,25),
                 new Dimension(150, 35), true));
 
-        double lastDelay = 0;
         while (gameThread != null) {
-            deltaTime = time.getDeltaTime() - GameTime.nanoSecondsToSeconds(lastDelay);
+            deltaTime = time.getDeltaTime();
             if (ticks == 0) {
                 deltaTime = 0;}
             tickSpeed = time.getFPS(deltaTime);
@@ -122,13 +115,6 @@ public class GamePanel extends JPanel implements Runnable {
 
             if (keys.escapePressed) {
                 System.exit(0);
-            }
-            if (tickDelaySwitch.isOn) {
-                sleep(1_000_000_000);
-                lastDelay = 1_000_000_000;
-            }
-            else {
-                lastDelay = 0;
             }
             update();
             ticks++;
@@ -157,7 +143,6 @@ public class GamePanel extends JPanel implements Runnable {
         mainSpace.setGravity(gravitySlider.value);
         timeMultiplierSlider.update(mouseButtons, mouseMovement);
         timeMultiplier = timeMultiplierSlider.value;
-        tickDelaySwitch.update(mouseButtons, mouseMovement);
         zeroGravityButton.update(mouseButtons, mouseMovement);
         if (zeroGravityButton.getState()) {
             Vector2D newGravity = new Vector2D(0, 0);
@@ -179,7 +164,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
 
-
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
@@ -190,7 +174,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         gravitySlider.render(g2, SCREEN_SCALE);
         timeMultiplierSlider.render(g2, SCREEN_SCALE);
-        tickDelaySwitch.render(g2, SCREEN_SCALE);
         zeroGravityButton.render(g2, SCREEN_SCALE);
         rightClickMenu.render(g2, SCREEN_SCALE);
 

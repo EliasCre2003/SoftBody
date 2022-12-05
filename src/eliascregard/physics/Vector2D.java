@@ -124,6 +124,10 @@ public class Vector2D {
         return distance(this, vector2);
     }
 
+    public boolean equals(Vector2D otherVector) {
+        System.out.println("HI");
+        return this.x == otherVector.x && this.y == otherVector.y;
+    }
     public String toString() {
         return "x: " + this.x + ", y: " + this.y;
     }

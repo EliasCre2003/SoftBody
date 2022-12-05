@@ -62,6 +62,7 @@ public class SpringBody {
                 springIndex++;
             }
         }
+        springStiffness = Math.sqrt(2 * Math.pow(springStiffness, 2));
         for (int i = 0; i < width-1; i++) {
             for (int j = 0; j < height-1; j++) {
                 springs[springIndex] = new Spring(nodes[i * height + j], nodes[(i+1) * height + j + 1], springStiffness, springDampingFactor);

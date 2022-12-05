@@ -7,21 +7,18 @@ public class Node {
     final public static double DEFAULT_NODE_RADIUS = 11;
 
     public Vector2D position;
-    public Vector2D previousPosition;
     public Vector2D velocity;
     public double mass;
     public double radius;
     public Vector2D totalForceVector;
-    public Vector2D lastForceVector;
     private boolean isFixed;
 
     public Node(Vector2D position, double mass, double radius) {
         this.position = position;
-        this.velocity = new Vector2D(0, 0);
+        this.velocity = new Vector2D();
         this.mass = mass;
         this.radius = radius;
-        this.totalForceVector = new Vector2D(0, 0);
-        this.lastForceVector = new Vector2D(0, 0);
+        this.totalForceVector = new Vector2D();
         this.isFixed = false;
 
     }
@@ -34,7 +31,6 @@ public class Node {
             Vector2D gravityVector = gravity.makeCopy();
             gravityVector.scale(this.mass);
             this.applyForce(gravityVector);
-            this.lastForceVector = this.totalForceVector.makeCopy();
             this.velocity.add(this.totalForceVector, deltaTime / this.mass);
             if (this.velocity.length() > 10000) {
                 this.velocity.normalize();
@@ -43,7 +39,6 @@ public class Node {
             this.position.add(this.velocity, deltaTime);
         } else {
             this.velocity.set(0, 0);
-            this.lastForceVector = this.totalForceVector.makeCopy();
         }
         this.totalForceVector.set(0, 0);
     }
@@ -106,7 +101,7 @@ public class Node {
         return false;
     }
 
-    public void resolveCollision(Line line, double deltaTime) {
+    public void resolveCollision(Line line) {
         if (this.isFixed) {
             return;
         }
@@ -159,7 +154,7 @@ public class Node {
         }
         this.position.set(closestPoint);
         direction.normalize();
-        double push = ((staticObject.restitutionCoefficient + 1) * this.velocity.dotProduct(direction));
+        double push = ((staticObject.getRestitutionCoefficient() + 1) * this.velocity.dotProduct(direction));
         Vector2D pushVector = direction.scaled(push);
         this.velocity.subtract(pushVector);
     }
