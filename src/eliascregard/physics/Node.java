@@ -62,21 +62,12 @@ public class Node {
         double correction = (this.radius + otherNode.radius - distance) / 2;
         this.position.add(direction, correction);
         otherNode.position.add(direction, -correction);
-        if (this.isFixed && otherNode.isFixed) {
-            return;
-        }
-        double p = 2 * (this.velocity.dotProduct(direction) - otherNode.velocity.dotProduct(direction)) / (this.mass + otherNode.mass);
-        if (Double.isNaN(p)) {
-            System.out.println("p is NaN");
-            return;
-        }
-        Vector2D pushVector1 = direction.makeCopy();
-        pushVector1.scale(p * this.mass);
-        this.velocity.subtract(pushVector1);
-        Vector2D pushVector2 = direction.makeCopy();
-        pushVector2.scale(p * otherNode.mass);
-        otherNode.velocity.add(pushVector2,1);
-
+        if (this.isFixed && otherNode.isFixed) return;
+        double totalMass = this.mass + otherNode.mass;
+        if (totalMass == 0) return;
+        double p = 2 * (this.velocity.dotProduct(direction) - otherNode.velocity.dotProduct(direction)) / totalMass;
+        this.velocity.subtract(direction.scaled(p / this.mass));
+        otherNode.velocity.add(direction.scaled(p / otherNode.mass));
     }
 
     public boolean isColliding(Line line) {
