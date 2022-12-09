@@ -32,10 +32,10 @@ public class Node {
             gravityVector.scale(this.mass);
             this.applyForce(gravityVector);
             this.velocity.add(this.totalForceVector, deltaTime / this.mass);
-            if (this.velocity.length() > 10000) {
-                this.velocity.normalize();
-                this.velocity.scale(10000);
-            }
+//            if (this.velocity.length() > 10000) {
+//                this.velocity.normalize();
+//                this.velocity.scale(10000);
+//            }
             this.position.add(this.velocity, deltaTime);
         } else {
             this.velocity.set(0, 0);
@@ -114,9 +114,9 @@ public class Node {
     }
 
     public boolean insidePerimeter(StaticObject staticObject) {
-        double[] perimeter = staticObject.getPerimeter();
-        return this.position.x < perimeter[0] && this.position.y < perimeter[1] &&
-                this.position.x > perimeter[2] && this.position.y > perimeter[3];
+        Perimeter perimeter = staticObject.getPerimeter();
+        return this.position.x < perimeter.getMax().x && this.position.y < perimeter.getMax().y &&
+                this.position.x > perimeter.getMin().x && this.position.y > perimeter.getMin().y;
     }
 
     public void resolveCollision(StaticObject staticObject) {
@@ -154,7 +154,7 @@ public class Node {
         }
         this.position.set(closestPoint);
         direction.normalize();
-        double push = ((staticObject.getRestitutionCoefficient() + 1) * this.velocity.dotProduct(direction));
+        double push = (2 * staticObject.getRestitutionCoefficient() * this.velocity.dotProduct(direction));
         Vector2D pushVector = direction.scaled(push);
         this.velocity.subtract(pushVector);
     }

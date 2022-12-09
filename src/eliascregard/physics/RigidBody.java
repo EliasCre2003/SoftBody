@@ -4,16 +4,16 @@ import java.awt.*;
 
 public class RigidBody {
 
-    public Vector2D position;
-    public Vector2D linearVelocity;
-    double angle;
-    double angularVelocity;
-    double torque;
-    Vector2D force;
-    double width;
-    double height;
-    double mass;
-    double momentOfInertia;
+    private Vector2D position;
+    private Vector2D linearVelocity;
+    private double angle;
+    private double angularVelocity;
+    private double torque;
+    private Vector2D force;
+    private double width;
+    private double height;
+    private double mass;
+    private double momentOfInertia;
 
     public RigidBody(Vector2D position, double width, double height, double mass, double angle) {
         this.position = position;

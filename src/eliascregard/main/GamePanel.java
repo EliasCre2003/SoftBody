@@ -77,7 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
 
         mainSpace.setGravity(gravitySlider.value);
-        mainSpace.setBoundary(new Boundary(new Vector2D(0, 0), DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height, 100000, 1, 1));
+        mainSpace.setBoundary(new Boundary(new Vector2D(0, 0), DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height, 100000, 0, 1));
 
         mainSpace.addStaticObject(new StaticObject(
                 new Vector2D[] {
@@ -161,7 +161,6 @@ public class GamePanel extends JPanel implements Runnable {
         if (rightClickMenu.rectangularButtons[0].getState()) {
             mainSpace.resetSpringBodies();
         }
-
     }
 
     public void paintComponent(Graphics g) {

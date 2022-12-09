@@ -4,10 +4,10 @@ import java.awt.*;
 
 public class StaticObject {
 
-    private Vector2D[] vertices;
-    private double frictionCoefficient;
-    private double restitutionCoefficient;
-    private double[] perimeter = new double[4];
+    private final Vector2D[] vertices;
+    private final double frictionCoefficient;
+    private final double restitutionCoefficient;
+    private Perimeter perimeter;
 
     public StaticObject(Vector2D[] vertices, double frictionCoefficient, double restitutionCoefficient) {
         this.vertices = vertices;
@@ -42,31 +42,10 @@ public class StaticObject {
     }
 
     public void calculatePerimeter() {
-        double maxX = vertices[0].x;
-        double maxY = vertices[0].y;
-        double minX = vertices[0].x;
-        double minY = vertices[0].y;
-        for (int i = 1; i < vertices.length; i++) {
-            if (vertices[i].x > maxX) {
-                maxX = vertices[i].x;
-            }
-            if (vertices[i].y > maxY) {
-                maxY = vertices[i].y;
-            }
-            if (vertices[i].x < minX) {
-                minX = vertices[i].x;
-            }
-            if (vertices[i].y < minY) {
-                minY = vertices[i].y;
-            }
-        }
-        perimeter[0] = maxX;
-        perimeter[1] = maxY;
-        perimeter[2] = minX;
-        perimeter[3] = minY;
+        perimeter = new Perimeter(vertices);
     }
 
-    public double[] getPerimeter() {
+    public Perimeter getPerimeter() {
         return perimeter;
     }
 

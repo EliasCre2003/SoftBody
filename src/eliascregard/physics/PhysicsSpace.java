@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class PhysicsSpace {
 
     private final static SpringBody DEFAULT_SPRING_BODY = SpringBody.homogeneousRectangle(
-            800,  0, 8, 8, 1, 1000, 100, 5, 10
+            800,  0, 8, 8, 1, 10000, 100, 5, 10
     );
 
     private Vector2D gravity = new Vector2D();
