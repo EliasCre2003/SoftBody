@@ -23,11 +23,10 @@ public class PhysicsSpace {
     private StaticObject[] staticObjects = new StaticObject[0];
     private Boundary boundary = null;
     private final Vector2D movement = new Vector2D();
-
     private int totalNodes = 0;
     private int totalSprings = 0;
-
     SpringBody selectedBody = DEFAULT_SPRING_BODY;
+    private final double maximumDeltaTime = 1.0 / 800;
 
     public PhysicsSpace() {
     }
@@ -36,7 +35,10 @@ public class PhysicsSpace {
         this.gravity = gravity;
     }
 
-    public void update(double deltaTime) {
+    private void update(double deltaTime) {
+        if (deltaTime > maximumDeltaTime) {
+            deltaTime = maximumDeltaTime;
+        }
         for (SpringBody body : springBodies) {
             for (Node node : body.nodes) {
 

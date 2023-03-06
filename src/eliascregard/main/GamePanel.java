@@ -106,7 +106,8 @@ public class GamePanel extends JPanel implements Runnable {
         while (gameThread != null) {
             deltaTime = time.getDeltaTime();
             if (ticks == 0) {
-                deltaTime = 0;}
+                deltaTime = 0;
+            }
             tickSpeed = time.getFPS(deltaTime);
             renderDeltaT += deltaTime;
             deltaTime *= timeMultiplier;
