@@ -3,6 +3,7 @@ package eliascregard.main;
 import eliascregard.input.*;
 import eliascregard.interactives.*;
 import eliascregard.interactives.ButtonGroup;
+import eliascregard.math.vectors.Vector2D;
 import eliascregard.physics.*;
 
 import javax.swing.*;
@@ -158,7 +159,7 @@ public class GamePanel extends JPanel implements Runnable {
             rightClickMenu.setPosition(mouseMovement.x, mouseMovement.y);
         }
         rightClickMenu.update(mouseButtons, mouseMovement);
-        if (rightClickMenu.rectangularButtons[0].getState()) {
+        if (rightClickMenu.getButton(0).getState()) {
             mainSpace.resetSpringBodies();
         }
     }

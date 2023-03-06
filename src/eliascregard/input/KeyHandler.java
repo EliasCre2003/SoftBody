@@ -17,6 +17,8 @@ public class KeyHandler implements KeyListener {
     public boolean xPressed = false;
     public boolean rPressed = false;
     public boolean tPressed = false;
+    public boolean onePressed = false;
+    public boolean twoPressed = false;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -62,6 +64,12 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_T) {
             tPressed = true;
         }
+        if (code == KeyEvent.VK_1) {
+            onePressed = true;
+        }
+        if (code == KeyEvent.VK_2) {
+            twoPressed = true;
+        }
     }
 
     @Override
@@ -103,6 +111,12 @@ public class KeyHandler implements KeyListener {
         }
         if (code == KeyEvent.VK_T) {
             tPressed = false;
+        }
+        if (code == KeyEvent.VK_1) {
+            onePressed = false;
+        }
+        if (code == KeyEvent.VK_2) {
+            twoPressed = false;
         }
     }
 }

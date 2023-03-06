@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import eliascregard.math.vectors.Vector2D;
+
 import java.awt.*;
 
 public class RigidBody {
@@ -10,22 +12,22 @@ public class RigidBody {
     private double angularVelocity;
     private double torque;
     private Vector2D force;
-    private double width;
-    private double height;
     private double mass;
     private double momentOfInertia;
+    private Vector2D[] vertices;
+    private Perimeter perimeter;
 
-    public RigidBody(Vector2D position, double width, double height, double mass, double angle) {
+    public RigidBody(Vector2D position, double width, double height, double mass, Vector2D[] vertices) {
         this.position = position;
         this.linearVelocity = new Vector2D();
         this.angle = angle;
         this.angularVelocity = 0;
         this.torque = 0;
         this.force = new Vector2D();
-        this.width = width;
-        this.height = height;
         this.mass = mass;
         this.momentOfInertia = mass * (width * width + height * height) / 12;
+        this.vertices = vertices;
+        calculatePerimeter();
     }
 
     public void update(double deltaTime, Vector2D gravity) {
@@ -36,6 +38,7 @@ public class RigidBody {
         this.angle += this.angularVelocity * deltaTime;
         this.force.set(0, 0);
         this.torque = 0;
+        calculatePerimeter();
     }
     public void update(double deltaTime) {
         this.update(deltaTime, new Vector2D(0, 9.82));
@@ -55,18 +58,28 @@ public class RigidBody {
     public Vector2D calculateTorqueArm(Vector2D position) {
         return calculateTorqueArm(position, this);
     }
+    public void calculatePerimeter() {
+        Vector2D min = vertices[0].makeCopy();
+        Vector2D max = vertices[0].makeCopy();
+        for (int i = 1; i < vertices.length; i++) {
+            if (vertices[i].x < min.x) {
+                min.x = vertices[i].x;
+            }
+            if (vertices[i].y < min.y) {
+                min.y = vertices[i].y;
+            }
+            if (vertices[i].x > max.x) {
+                max.x = vertices[i].x;
+            }
+            if (vertices[i].y > max.y) {
+                max.y = vertices[i].y;
+            }
+        }
+        this.perimeter = new Perimeter(min, max);
+    }
 
     public Vector2D[] getPolygonPoints() {
-        Vector2D[] points = new Vector2D[4];
-        points[0] = new Vector2D(-width / 2, -height / 2);
-        points[1] = new Vector2D(width / 2, -height / 2);
-        points[2] = new Vector2D(width / 2, height / 2);
-        points[3] = new Vector2D(-width / 2, height / 2);
-        for (Vector2D point : points) {
-            point.rotate(angle);
-            point.add(position);
-        }
-        return points;
+        return vertices;
     }
 
     public Line[] getPolygonLines() {
@@ -87,16 +100,10 @@ public class RigidBody {
         return polygon;
     }
 
-    public boolean resolveCollision(RigidBody otherRigidBody) {
-        Line[] lines = getPolygonLines();
-        Line[] otherLines = otherRigidBody.getPolygonLines();
-        for (Line line : lines) {
-            for (Line otherLine : otherLines) {
-                if (line.lineLineIntersection(otherLine) != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public boolean insidePerimeter(RigidBody rigidBody) {
+        return Perimeter.perimeterIntersection(this.perimeter, rigidBody.perimeter);
     }
+
+
 }
+

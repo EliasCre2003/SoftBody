@@ -1,4 +1,6 @@
-package eliascregard.physics;
+package eliascregard.math.vectors;
+
+import eliascregard.math.Matrix;
 
 public class Vector2D {
 
@@ -124,9 +126,32 @@ public class Vector2D {
         return distance(this, vector2);
     }
 
-    public boolean equals(Vector2D otherVector) {
-        System.out.println("HI");
-        return this.x == otherVector.x && this.y == otherVector.y;
+    public Vector2D projectedOnto(Vector2D otherVector) {
+        double scalar = this.dotProduct(otherVector) / otherVector.dotProduct(otherVector);
+        return otherVector.scaled(scalar);
+    }
+    public void projectOnto(Vector2D otherVector) {
+        this.set(this.projectedOnto(otherVector));
+    }
+    public Vector2D rejectedFrom(Vector2D otherVector) {
+        return difference(this, this.projectedOnto(otherVector));
+    }
+    public void rejectFrom(Vector2D otherVector) {
+        this.set(this.rejectedFrom(otherVector));
+    }
+
+    public Matrix toMatrix() {
+        Matrix matrix = new Matrix(2, 1);
+        matrix.set(0, 0, this.x);
+        matrix.set(1, 0, this.y);
+        return matrix;
+    }
+
+    public boolean equals(Object object) {
+        if (object instanceof Vector2D vector) {
+            return this.x == vector.x && this.y == vector.y;
+        }
+        return false;
     }
     public String toString() {
         return "x: " + this.x + ", y: " + this.y;

@@ -2,7 +2,7 @@ package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
-import eliascregard.physics.Vector2D;
+import eliascregard.math.vectors.Vector2D;
 
 import java.awt.*;
 

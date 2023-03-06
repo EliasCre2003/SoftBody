@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import eliascregard.math.vectors.Vector2D;
+
 public class Collisions {
 
     public static boolean isColliding(Circle circle1, Circle circle2) {

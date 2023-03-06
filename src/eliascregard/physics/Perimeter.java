@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import eliascregard.math.vectors.Vector2D;
+
 public class Perimeter {
 
     private Vector2D min;
@@ -35,6 +37,11 @@ public class Perimeter {
         }
         this.min = new Vector2D(minX, minY);
         this.max = new Vector2D(maxX, maxY);
+    }
+
+    public static boolean perimeterIntersection(Perimeter perimeter1, Perimeter perimeter2) {
+        return perimeter1.min.x <= perimeter2.max.x && perimeter1.max.x >= perimeter2.min.x &&
+               perimeter1.min.y <= perimeter2.max.y && perimeter1.max.y >= perimeter2.min.y;
     }
 
     public Vector2D getMin() {

@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import eliascregard.math.vectors.Vector2D;
+
 public class Circle {
 
     Vector2D position;

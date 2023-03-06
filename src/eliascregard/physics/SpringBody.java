@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import eliascregard.math.vectors.Vector2D;
+
 import java.awt.*;
 import java.util.Arrays;
 
@@ -73,6 +75,27 @@ public class SpringBody {
         }
 
         return new SpringBody(nodes, springs, width, height);
+    }
+
+    public static SpringBody homogeneousCircle(double x, double y, double radius, int segments, double nodeMass,
+                                               double springStiffness, double springDampingFactor, double nodeRadius) {
+        Node[] nodes = new Node[segments + 1];
+        Spring[] springs = new Spring[segments * 2];
+
+        nodes[0] = new Node(new Vector2D(x, y), nodeMass, nodeRadius);
+        double theta = 0;
+        for (int i = 0; i < segments; i++) {
+            nodes[i+1] = new Node(
+                    new Vector2D(x + radius * Math.cos(theta), y + radius * Math.sin(theta)), nodeMass, nodeRadius
+            );
+            theta += 2 * Math.PI / segments;
+        }
+        for (int i = 0; i < segments; i++) {
+            springs[i] = new Spring(nodes[0], nodes[i+1], springStiffness, springDampingFactor);
+            springs[i+segments] = new Spring(nodes[i+1], nodes[(i+1) % segments + 1], 10000, springDampingFactor);
+        }
+
+        return new SpringBody(nodes, springs, 1, 1);
     }
 
     public SpringBody makeCopy() {

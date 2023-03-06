@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import eliascregard.math.vectors.Vector2D;
+
 public class Line {
     public Vector2D point1;
     public Vector2D point2;

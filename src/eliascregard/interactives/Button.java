@@ -2,15 +2,15 @@ package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
-import eliascregard.physics.Vector2D;
+import eliascregard.math.vectors.Vector2D;
 
-class Button {
+public class Button {
 
     String label;
     boolean isPressed = false;
     Vector2D position;
     boolean mouseIsOver = false;
-    private boolean isVisible = true;
+    public boolean isVisible = true;
 
     Button(String label, Vector2D position) {
         this.label = label;

@@ -3,6 +3,7 @@ package eliascregard.physics;
 import eliascregard.input.KeyHandler;
 import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseMovementHandler;
+import eliascregard.math.vectors.Vector2D;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -13,6 +14,10 @@ public class PhysicsSpace {
             800,  0, 8, 8, 1, 10000, 100, 5, 10
     );
 
+    private final static SpringBody CIRCLE_SPRING_BODY = SpringBody.homogeneousCircle(
+            800,  300, 100, 25, 1, 500, 100, 10
+    );
+
     private Vector2D gravity = new Vector2D();
     private SpringBody[] springBodies = new SpringBody[0];
     private StaticObject[] staticObjects = new StaticObject[0];
@@ -21,6 +26,8 @@ public class PhysicsSpace {
 
     private int totalNodes = 0;
     private int totalSprings = 0;
+
+    SpringBody selectedBody = DEFAULT_SPRING_BODY;
 
     public PhysicsSpace() {
     }
@@ -75,13 +82,23 @@ public class PhysicsSpace {
     private void handleInput(KeyHandler keys, MouseButtonHandler mouseButtons, MouseMovementHandler mouseMovement) {
         if (keys.enterPressed) {
             keys.enterPressed = false;
-            addSpringBody(DEFAULT_SPRING_BODY.makeCopy());
-            Vector2D node1Position = DEFAULT_SPRING_BODY.nodes[0].position;
+            addSpringBody(selectedBody.makeCopy());
+            Vector2D node1Position = selectedBody.nodes[0].position;
             for (Node node : springBodies[springBodies.length - 1].nodes) {
                 double deltaX = node.position.x - node1Position.x;
                 double deltaY = node.position.y - node1Position.y;
                 node.position.set(mouseMovement.x + deltaX, mouseMovement.y + deltaY);
             }
+        }
+
+        if (keys.onePressed) {
+            keys.onePressed = false;
+            selectedBody = DEFAULT_SPRING_BODY;
+        }
+
+        if (keys.twoPressed) {
+            keys.twoPressed = false;
+            selectedBody = CIRCLE_SPRING_BODY;
         }
 
         if (keys.rPressed) {

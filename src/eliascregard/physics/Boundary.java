@@ -1,5 +1,7 @@
 package eliascregard.physics;
 
+import eliascregard.math.vectors.Vector2D;
+
 public class Boundary extends StaticObject{
     Vector2D position;
     double width;
