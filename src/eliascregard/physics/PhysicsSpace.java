@@ -11,11 +11,15 @@ import java.util.Arrays;
 public class PhysicsSpace {
 
     private final static SpringBody DEFAULT_SPRING_BODY = SpringBody.homogeneousRectangle(
-            800,  0, 8, 8, 1, 10000, 100, 5, 10
+            800,  0, 8, 8, 1, 2000, 100, 5, 10
     );
 
     private final static SpringBody CIRCLE_SPRING_BODY = SpringBody.homogeneousCircle(
-            800,  300, 100, 25, 1, 500, 100, 10
+            800,  300, 100, 25, 3, 1500, 50, 10
+    );
+
+    private final static SpringBody TRIANGLE_SPRING_BODY = SpringBody.homogeneousTriangle(
+            800,  300, 7, 1, 3000, 150, 5, 10
     );
 
     private Vector2D gravity = new Vector2D();
@@ -25,8 +29,9 @@ public class PhysicsSpace {
     private final Vector2D movement = new Vector2D();
     private int totalNodes = 0;
     private int totalSprings = 0;
-    SpringBody selectedBody = DEFAULT_SPRING_BODY;
-    private final double maximumDeltaTime = 1.0 / 800;
+    private SpringBody selectedBody = DEFAULT_SPRING_BODY;
+    private final double maximumDeltaTime = 1.0 / 1000;
+
 
     public PhysicsSpace() {
     }
@@ -101,6 +106,11 @@ public class PhysicsSpace {
         if (keys.twoPressed) {
             keys.twoPressed = false;
             selectedBody = CIRCLE_SPRING_BODY;
+        }
+
+        if (keys.threePressed) {
+            keys.threePressed = false;
+            selectedBody = TRIANGLE_SPRING_BODY;
         }
 
         if (keys.rPressed) {
@@ -191,6 +201,5 @@ public class PhysicsSpace {
             staticObject.render(g2, scale);
         }
     }
-
 
 }

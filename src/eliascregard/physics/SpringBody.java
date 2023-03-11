@@ -18,7 +18,12 @@ public class SpringBody {
         this.width = width;
         this.height = height;
     }
-
+    public SpringBody(Node[] nodes, Spring[] springs) {
+        this.nodes = nodes;
+        this.springs = springs;
+        this.width = 0;
+        this.height = 0;
+    }
     public void update(double deltaTime, Vector2D gravity) {
         for (Node node : this.nodes) {
             node.update(deltaTime, gravity);
@@ -77,6 +82,36 @@ public class SpringBody {
         return new SpringBody(nodes, springs, width, height);
     }
 
+    public static SpringBody homogeneousTriangle(double x, double y, int size, double nodeMass,
+                                                double springStiffness, double springDampingFactor,
+                                                double spacing, double nodeRadius) {
+        Node[] nodes = new Node[size * (size + 1) / 2];
+        Spring[] springs = new Spring[3 * (size * (size - 1)) / 2];
+        double actualSpacing = spacing + 2 * nodeRadius;
+        int nodeIndex = 0;
+        double verticalStep = actualSpacing * Math.sin(Math.PI / 3);
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < i + 1; j++) {
+                Vector2D position = new Vector2D(x - i * actualSpacing / 2 + j * actualSpacing, y + i * verticalStep);
+                nodes[nodeIndex] = new Node(position, nodeMass, nodeRadius);
+                nodeIndex++;
+            }
+        }
+        int springIndex = 0, currentNode = 0;
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = 0; j < i + 1; j++) {
+                springs[springIndex] = new Spring(nodes[currentNode], nodes[currentNode + i + 1], springStiffness, springDampingFactor);
+                springs[springIndex + 1] = new Spring(nodes[currentNode], nodes[currentNode + i + 2], springStiffness, springDampingFactor);
+                springs[springIndex + 2] = new Spring(nodes[currentNode + i + 1], nodes[currentNode + i + 2], springStiffness, springDampingFactor);
+                springIndex += 3;
+                currentNode++;
+            }
+        }
+        return new SpringBody(nodes, springs);
+
+
+    }
+
     public static SpringBody homogeneousCircle(double x, double y, double radius, int segments, double nodeMass,
                                                double springStiffness, double springDampingFactor, double nodeRadius) {
         Node[] nodes = new Node[segments + 1];
@@ -95,7 +130,7 @@ public class SpringBody {
             springs[i+segments] = new Spring(nodes[i+1], nodes[(i+1) % segments + 1], 10000, springDampingFactor);
         }
 
-        return new SpringBody(nodes, springs, 1, 1);
+        return new SpringBody(nodes, springs);
     }
 
     public SpringBody makeCopy() {
