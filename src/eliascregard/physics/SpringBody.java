@@ -19,10 +19,7 @@ public class SpringBody {
         this.height = height;
     }
     public SpringBody(Node[] nodes, Spring[] springs) {
-        this.nodes = nodes;
-        this.springs = springs;
-        this.width = 0;
-        this.height = 0;
+        this(nodes, springs, 0, 0);
     }
     public void update(double deltaTime, Vector2D gravity) {
         for (Node node : this.nodes) {

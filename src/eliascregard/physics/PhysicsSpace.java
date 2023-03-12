@@ -19,7 +19,7 @@ public class PhysicsSpace {
     );
 
     private final static SpringBody TRIANGLE_SPRING_BODY = SpringBody.homogeneousTriangle(
-            800,  300, 7, 1, 3000, 150, 5, 10
+            800,  300, 30, 1, 10000, 150, 5, 10
     );
 
     private Vector2D gravity = new Vector2D();
