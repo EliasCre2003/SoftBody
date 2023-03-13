@@ -3,8 +3,11 @@ package eliascregard.physics;
 import eliascregard.math.vectors.Vector2D;
 
 public class Line {
-    public Vector2D point1;
-    public Vector2D point2;
+    private final Vector2D point1;
+    private final Vector2D point2;
+    private double length = -1;
+    private Vector2D normal = null;
+
 
     public Line(Vector2D point1, Vector2D point2) {
         this.point1 = point1;
@@ -15,7 +18,24 @@ public class Line {
         this.point2 = new Vector2D(x2, y2);
     }
     public double length() {
-        return this.point1.distance(this.point2);
+        if (length == -1) {
+            length = point1.distance(point2);
+        }
+        return length;
+    }
+    public Vector2D normal() {
+        if (normal == null) {
+            normal = new Vector2D(point2.y - point1.y, point1.x - point2.x);
+            normal.normalize();
+        }
+        return normal;
+    }
+
+    public Vector2D getPoint1() {
+        return this.point1;
+    }
+    public Vector2D getPoint2() {
+        return this.point2;
     }
 
     public static Vector2D lineLineIntersection(Line line1, Line line2) {

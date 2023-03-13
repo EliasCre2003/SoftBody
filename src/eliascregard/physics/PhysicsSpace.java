@@ -147,6 +147,9 @@ public class PhysicsSpace {
     public void setBoundary(Boundary boundary) {
         this.boundary = boundary;
     }
+    public void setBoundaryFriction(double friction) {
+        this.boundary.setFrictionCoefficient(friction);
+    }
 
     public void addSpringBody(SpringBody springBody) {
         this.springBodies = Arrays.copyOf(this.springBodies, this.springBodies.length + 1);

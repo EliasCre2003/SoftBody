@@ -73,20 +73,20 @@ public class Node {
     }
 
     public boolean isColliding(Line line) {
-        double side1 = Math.sqrt(Math.pow(this.position.x - line.point1.x, 2) + Math.pow(this.position.y - line.point2.y, 2));
-        double side2 = Math.sqrt(Math.pow(this.position.x - line.point2.x, 2) + Math.pow(this.position.y - line.point2.y, 2));
+        double side1 = Math.sqrt(Math.pow(this.position.x - line.getPoint1().x, 2) + Math.pow(this.position.y - line.getPoint2().y, 2));
+        double side2 = Math.sqrt(Math.pow(this.position.x - line.getPoint2().x, 2) + Math.pow(this.position.y - line.getPoint2().y, 2));
         if (side1 < this.radius || side2 < this.radius) {
             return true;
         }
 
-        Vector2D distanceVector = Vector2D.difference(line.point1, line.point2);
+        Vector2D distanceVector = Vector2D.difference(line.getPoint1(), line.getPoint2());
         double dot = (
-                (this.position.x - line.point1.x) * (line.point2.x - line.point1.x) +
-                (this.position.y - line.point1.y) * (line.point2.y - line.point1.y)
+                (this.position.x - line.getPoint1().x) * (line.getPoint2().x - line.getPoint1().x) +
+                (this.position.y - line.getPoint1().y) * (line.getPoint2().y - line.getPoint1().y)
         ) / Math.pow(distanceVector.length(), 2);
         Vector2D closestPoint = new Vector2D(
-                line.point1.x + dot * (line.point2.x - line.point1.x),
-                line.point1.y + dot * (line.point2.y - line.point1.y)
+                line.getPoint1().x + dot * (line.getPoint2().x - line.getPoint1().x),
+                line.getPoint1().y + dot * (line.getPoint2().y - line.getPoint1().y)
         );
         if (Line.linePoint(line, closestPoint)) {
             return Vector2D.distance(this.position, closestPoint) < this.radius;
@@ -98,7 +98,7 @@ public class Node {
         if (this.isFixed) {
             return;
         }
-        double lineAngle = Math.atan2(line.point2.y - line.point1.y, line.point2.x - line.point1.x);
+        double lineAngle = Math.atan2(line.getPoint2().y - line.getPoint1().y, line.getPoint2().x - line.getPoint1().x);
         double velocityAngle = Math.atan2(this.velocity.y, this.velocity.x);
         double reflectionAngle = 2 * lineAngle - velocityAngle;
         Vector2D collisionVector = Vector2D.angleToVector(reflectionAngle);
@@ -116,7 +116,7 @@ public class Node {
 
         // CHECKS IF THE NODE IS INSIDE THE PERIMETER OF THE STATIC OBJECT
         Line[] polygonLines = staticObject.getLines();
-        Line ray = new Line(this.position, new Vector2D(this.position.x + Integer.MAX_VALUE, this.position.y));
+        Line ray = new Line(position, new Vector2D(position.x + Integer.MAX_VALUE, position.y));
         int intersections = 0;
         Vector2D[] closestPoints = new Vector2D[polygonLines.length];
         for (int i = 0; i < polygonLines.length; i++) {
@@ -124,32 +124,37 @@ public class Node {
             if (intersectionPoint != null) {
                 intersections++;
             }
-            closestPoints[i] = Line.closestPointOnLineToPoint(polygonLines[i], this.position);
+            closestPoints[i] = Line.closestPointOnLineToPoint(polygonLines[i], position);
         }
         if (intersections % 2 == 0) {
             return;
         }
         // FINDS THE CLOSEST POINT ON THE STATIC OBJECTS PERIMETER TO THE NODE
-        Vector2D closestPoint = closestPoints[0];
-        double closestDistance = Vector2D.distance(this.position, closestPoint);
+        int closestIndex = 0;
+        double closestDistance = Vector2D.distance(position, closestPoints[0]);
         for (int i = 1; i < closestPoints.length; i++) {
-            double distance = Vector2D.distance(this.position, closestPoints[i]);
+            double distance = Vector2D.distance(position, closestPoints[i]);
             if (distance < closestDistance) {
                 closestDistance = distance;
-                closestPoint = closestPoints[i];
+                closestIndex = i;
             }
         }
+        Vector2D closestPoint = closestPoints[closestIndex];
+        Line closestLine = polygonLines[closestIndex];
 
         // FINALLY RESOLVES THE COLLISION
-        Vector2D direction = Vector2D.difference(this.position, closestPoint);
-        if (direction.length() == 0) {
-            return;
-        }
-        this.position.set(closestPoint);
-        direction.normalize();
-        double push = (2 * staticObject.getRestitutionCoefficient() * this.velocity.dotProduct(direction));
-        Vector2D pushVector = direction.scaled(push);
-        this.velocity.subtract(pushVector);
+        Vector2D lineNormal = closestLine.normal();
+        if (lineNormal.length() == 0) return;
+        position.set(closestPoint);
+        double push = (2 * staticObject.getRestitutionCoefficient() * velocity.dotProduct(lineNormal));
+        Vector2D lineNormalForce = lineNormal.scaled(push);
+        Vector2D frictionForce = Vector2D.difference(velocity,
+                lineNormal.scaled(velocity.dotProduct(lineNormal) / lineNormal.dotProduct(lineNormalForce))
+        );
+        frictionForce.normalized();
+        frictionForce.scale(staticObject.getFrictionCoefficient());
+        velocity.subtract(lineNormalForce);
+        velocity.subtract(frictionForce.scaled(1 / mass));
     }
 
     public void fix(double x, double y) {

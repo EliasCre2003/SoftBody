@@ -10,8 +10,8 @@ public class Collisions {
     }
 
     public static boolean isColliding(Line line, Vector2D point, double buffer) {
-        double d1 = point.distance(line.point1);
-        double d2 = point.distance(line.point2);
+        double d1 = point.distance(line.getPoint1());
+        double d2 = point.distance(line.getPoint2());
         double lineLength = line.length();
         return d1 + d2 >= lineLength - buffer && d1 + d2 <= lineLength + buffer;
     }
@@ -21,10 +21,10 @@ public class Collisions {
     }
 
     public static boolean isColliding(Line line1, Line line2) {
-        Vector2D p1 = line1.point1;
-        Vector2D p2 = line1.point2;
-        Vector2D p3 = line2.point1;
-        Vector2D p4 = line2.point2;
+        Vector2D p1 = line1.getPoint1();
+        Vector2D p2 = line1.getPoint2();
+        Vector2D p3 = line2.getPoint1();
+        Vector2D p4 = line2.getPoint1();
 
         double denominator = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
         if (denominator == 0) {

@@ -42,7 +42,9 @@ public class SpringBody {
         int springIndex = 0;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                nodes[nodeIndex] = new Node(new Vector2D(x + i * (2*nodeRadius + spacing), y+nodeRadius + j * (2*nodeRadius + spacing)), nodeMass, nodeRadius);
+                nodes[nodeIndex] = new Node(new Vector2D(
+                        x + i * (2*nodeRadius + spacing), y+nodeRadius + j * (2*nodeRadius + spacing)),
+                        nodeMass, nodeRadius);
                 nodeIndex++;
             }
         }
@@ -90,9 +92,15 @@ public class SpringBody {
         int springIndex = 0, currentNode = 0;
         for (int i = 0; i < size - 1; i++) {
             for (int j = 0; j < i + 1; j++) {
-                springs[springIndex] = new Spring(nodes[currentNode], nodes[currentNode + i + 1], springStiffness, springDampingFactor);
-                springs[springIndex + 1] = new Spring(nodes[currentNode], nodes[currentNode + i + 2], springStiffness, springDampingFactor);
-                springs[springIndex + 2] = new Spring(nodes[currentNode + i + 1], nodes[currentNode + i + 2], springStiffness, springDampingFactor);
+                springs[springIndex] = new Spring(
+                        nodes[currentNode], nodes[currentNode + i + 1], springStiffness, springDampingFactor
+                );
+                springs[springIndex + 1] = new Spring(
+                        nodes[currentNode], nodes[currentNode + i + 2], springStiffness, springDampingFactor
+                );
+                springs[springIndex + 2] = new Spring(
+                        nodes[currentNode + i + 1], nodes[currentNode + i + 2], springStiffness, springDampingFactor
+                );
                 springIndex += 3;
                 currentNode++;
             }
@@ -110,14 +118,14 @@ public class SpringBody {
         nodes[0] = new Node(new Vector2D(x, y), nodeMass, nodeRadius);
         double theta = 0;
         for (int i = 0; i < segments; i++) {
-            nodes[i+1] = new Node(
-                    new Vector2D(x + radius * Math.cos(theta), y + radius * Math.sin(theta)), nodeMass, nodeRadius
+            nodes[i+1] = new Node(new Vector2D(
+                    x + radius * Math.cos(theta), y + radius * Math.sin(theta)), nodeMass, nodeRadius
             );
             theta += 2 * Math.PI / segments;
         }
         for (int i = 0; i < segments; i++) {
             springs[i] = new Spring(nodes[0], nodes[i+1], springStiffness, springDampingFactor);
-            springs[i+segments] = new Spring(nodes[i+1], nodes[(i+1) % segments + 1], 10000, springDampingFactor);
+            springs[i+segments] = new Spring(nodes[i+1], nodes[(i+1) % segments + 1], 10 * springStiffness, 10 * springDampingFactor);
         }
 
         return new SpringBody(nodes, springs);

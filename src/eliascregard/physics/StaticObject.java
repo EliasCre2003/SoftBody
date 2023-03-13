@@ -7,8 +7,8 @@ import java.awt.*;
 public class StaticObject {
 
     private final Vector2D[] vertices;
-    private final double frictionCoefficient;
-    private final double restitutionCoefficient;
+    private double frictionCoefficient;
+    private double restitutionCoefficient;
     private Perimeter perimeter;
 
     public StaticObject(Vector2D[] vertices, double frictionCoefficient, double restitutionCoefficient) {
@@ -41,6 +41,12 @@ public class StaticObject {
     }
     public double getRestitutionCoefficient() {
         return this.restitutionCoefficient;
+    }
+    public double getFrictionCoefficient() {
+        return this.frictionCoefficient;
+    }
+    public void setFrictionCoefficient(double frictionCoefficient) {
+        this.frictionCoefficient = frictionCoefficient;
     }
 
     public void calculatePerimeter() {

@@ -36,14 +36,21 @@ public class GamePanel extends JPanel implements Runnable {
     private final PhysicsSpace mainSpace = new PhysicsSpace(gravitySlider.value);
 
     private final Slider timeMultiplierSlider = new Slider(
-            1, 0, 2, 200, true,
+            "Time", 1, 0, 2, 200, true,
             new Color(255,0,0), new Color(255,255,255),
             new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 230)
     );
     private double timeMultiplier = timeMultiplierSlider.value;
 
+    private final Slider frictionSlider = new Slider(
+            "Friction", 0.1, 0, 1, 200, true,
+            new Color(255,0,0), new Color(255,255,255),
+            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 270)
+    );
+    private double friction = frictionSlider.value;
+
     private final CircularButton zeroGravityButton = new CircularButton(
-            "Zero Gravity", new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 260),
+            "Zero Gravity", new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 300),
             new Color(255, 255, 255), new Color(255, 0, 0), 10
     );
 
@@ -145,6 +152,8 @@ public class GamePanel extends JPanel implements Runnable {
         mainSpace.setGravity(gravitySlider.value);
         timeMultiplierSlider.update(mouseButtons, mouseMovement);
         timeMultiplier = timeMultiplierSlider.value;
+        frictionSlider.update(mouseButtons, mouseMovement);
+        mainSpace.setBoundaryFriction(frictionSlider.value);
         zeroGravityButton.update(mouseButtons, mouseMovement);
         if (zeroGravityButton.getState()) {
             Vector2D newGravity = new Vector2D(0, 0);
@@ -175,6 +184,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         gravitySlider.render(g2, SCREEN_SCALE);
         timeMultiplierSlider.render(g2, SCREEN_SCALE);
+        frictionSlider.render(g2, SCREEN_SCALE);
         zeroGravityButton.render(g2, SCREEN_SCALE);
         rightClickMenu.render(g2, SCREEN_SCALE);
 

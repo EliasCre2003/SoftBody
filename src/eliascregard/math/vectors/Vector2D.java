@@ -139,6 +139,9 @@ public class Vector2D {
     public void rejectFrom(Vector2D otherVector) {
         this.set(this.rejectedFrom(otherVector));
     }
+    public Vector2D difference(Vector2D otherVector) {
+        return difference(this, otherVector);
+    }
 
     public Matrix toMatrix() {
         Matrix matrix = new Matrix(2, 1);
