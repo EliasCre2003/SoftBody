@@ -9,23 +9,16 @@ public class SpringBody {
 
     public Node[] nodes;
     public Spring[] springs;
-    public int width;
-    public int height;
 
-    public SpringBody(Node[] nodes, Spring[] springs, int width, int height) {
+    public SpringBody(Node[] nodes, Spring[] springs) {
         this.nodes = nodes;
         this.springs = springs;
-        this.width = width;
-        this.height = height;
-    }
-    public SpringBody(Node[] nodes, Spring[] springs) {
-        this(nodes, springs, 0, 0);
     }
     public void update(double deltaTime, Vector2D gravity) {
-        for (Node node : this.nodes) {
+        for (Node node : nodes) {
             node.update(deltaTime, gravity);
         }
-        for (Spring spring : this.springs) {
+        for (Spring spring : springs) {
             spring.update();
 //            if (spring.getLength() > 4 * spring.restLength) {
 //                this.removeSpring(spring);
@@ -76,7 +69,7 @@ public class SpringBody {
             }
         }
 
-        return new SpringBody(nodes, springs, width, height);
+        return new SpringBody(nodes, springs);
     }
 
     public static SpringBody homogeneousTriangle(double x, double y, int size, double nodeMass,
@@ -141,19 +134,17 @@ public class SpringBody {
             int node2Index = Arrays.asList(this.nodes).indexOf(this.springs[i].node2);
             springs[i] = new Spring(nodes[node1Index], nodes[node2Index], this.springs[i].stiffness, this.springs[i].dampingFactor);
         }
-        return new SpringBody(nodes, springs, this.width, this.height);
+        return new SpringBody(nodes, springs);
     }
 
     public void render(Graphics2D g2, double scale, int renderingMode) {
-        if (renderingMode == 0 || renderingMode == 2) {
-            for (Spring spring : this.springs) {
-                spring.render(g2, scale);
-            }
-            for (Node node : this.nodes) {
-                node.render(g2, scale);
-            }
+        for (Spring spring : this.springs) {
+            spring.render(g2, scale);
         }
-        if (renderingMode == 2) {
+        for (Node node : this.nodes) {
+            node.render(g2, scale);
+        }
+        if (renderingMode == 1) {
             g2.setColor(new Color(0,255,0));
             for (Node node : this.nodes) {
                 Point p1 = new Point((int)(node.position.x*scale), (int)(node.position.y*scale));
@@ -161,23 +152,7 @@ public class SpringBody {
                 g2.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
         }
-        else if (renderingMode == 1) {
-            g2.setColor(new Color(0,0,255));
-            Polygon polly = new Polygon();
-            for (int i = 0; i < this.height - 1; i++) {
-                polly.addPoint((int)((this.nodes[i].position.x)*scale), (int)((this.nodes[i].position.y)*scale));
-            }
-            for (int i = 1; i < this.width; i++) {
-                polly.addPoint((int)((this.nodes[i * this.height - 1].position.x)*scale), (int)((this.nodes[i * this.height - 1].position.y)*scale));
-            }
-            for (int i = 1; i < this.height; i++) {
-                polly.addPoint((int)((this.nodes[this.nodes.length - i].position.x)*scale), (int)((this.nodes[this.nodes.length - i].position.y)*scale));
-            }
-            for (int i = 1; i < this.width; i++) {
-                polly.addPoint((int)((this.nodes[this.nodes.length - i * this.height].position.x)*scale), (int)((this.nodes[this.nodes.length - i * this.height].position.y)*scale));
-            }
-            g2.fillPolygon(polly);
-        }
+
     }
 
 }

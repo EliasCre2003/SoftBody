@@ -136,7 +136,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (keys.tPressed) {
             keys.tPressed = false;
-            renderMode = (renderMode + 1) % 3;
+            renderMode = (renderMode + 1) % 2;
         }
 
         mainSpace.update(deltaTime, keys, mouseButtons, mouseMovement);
@@ -178,7 +178,7 @@ public class GamePanel extends JPanel implements Runnable {
         zeroGravityButton.render(g2, SCREEN_SCALE);
         rightClickMenu.render(g2, SCREEN_SCALE);
 
-        if (renderMode == 2) {
+        if (renderMode == 1) {
             g2.setColor(new Color(0,0,0,0.5f));
             g2.fillRect(0,0, 200, 120);
             g2.setColor(new Color(255, 255, 255));
