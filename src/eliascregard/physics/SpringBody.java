@@ -3,6 +3,7 @@ package eliascregard.physics;
 import eliascregard.math.vectors.Vector2D;
 
 import java.awt.*;
+import java.io.*;
 import java.util.Arrays;
 
 public class SpringBody {
@@ -144,6 +145,36 @@ public class SpringBody {
         }
         return new SpringBody(nodes, springs);
     }
+
+//    public void saveAs(String filename) {
+//        try {
+//            FileOutputStream fileOut = new FileOutputStream(filename);
+//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//            out.writeObject(this);
+//            out.close();
+//            fileOut.close();
+//        } catch (IOException i) {
+//            i.printStackTrace();
+//        }
+//    }
+//
+//    public static SpringBody load(String path) {
+//        try {
+//            FileInputStream fileIn = new FileInputStream(path);
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            SpringBody body = (SpringBody) in.readObject();
+//            in.close();
+//            fileIn.close();
+//            return body;
+//        } catch (IOException i) {
+//            i.printStackTrace();
+//            return null;
+//        } catch (ClassNotFoundException c) {
+//            System.out.println("SpringBody class not found");
+//            c.printStackTrace();
+//            return null;
+//        }
+//    }
 
     public void render(Graphics2D g2, double scale, int renderingMode) {
         for (Spring spring : this.springs) {

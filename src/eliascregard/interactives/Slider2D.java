@@ -1,6 +1,7 @@
 package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
@@ -55,27 +56,27 @@ public class Slider2D {
         this.circlePosition = calculateCirclePosition();
     }
 
-    public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
+    public void update(MouseHandler mouse) {
         if (this.isPressed) {
-            if (mousePosition.x < this.position.x) {
+            if (mouse.getX() < this.position.x) {
                 this.circlePosition.x = this.position.x;
-            } else if (mousePosition.x > this.position.x + this.size.width) {
+            } else if (mouse.getX() > this.position.x + this.size.width) {
                 this.circlePosition.x = this.position.x + this.size.width;
             } else {
-                this.circlePosition.x = mousePosition.x;
+                this.circlePosition.x = mouse.getX();
             }
-            if (mousePosition.y < this.position.y) {
+            if (mouse.getY() < this.position.y) {
                 this.circlePosition.y = this.position.y;
-            } else if (mousePosition.y > this.position.y + this.size.height) {
+            } else if (mouse.getY() > this.position.y + this.size.height) {
                 this.circlePosition.y = this.position.y + this.size.height;
             } else {
-                this.circlePosition.y = mousePosition.y;
+                this.circlePosition.y = mouse.getY();
             }
             this.value = calculateValue();
-        } else if (mouseButton.leftIsPressed) {
-            this.isPressed = this.circlePosition.distance(new Vector2D(mousePosition.x, mousePosition.y)) < 10;
+        } else if (mouse.leftIsPressed()) {
+            this.isPressed = this.circlePosition.distance(new Vector2D(mouse.getX(), mouse.getY())) < 10;
         }
-        if (!mouseButton.leftIsPressed) {
+        if (!mouse.leftIsPressed()) {
             this.isPressed = false;
         }
     }

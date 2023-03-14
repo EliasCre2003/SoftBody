@@ -143,18 +143,17 @@ public class Node {
         Line closestLine = polygonLines[closestIndex];
 
         // FINALLY RESOLVES THE COLLISION
+        position.set(closestPoint);
         Vector2D lineNormal = closestLine.normal();
         if (lineNormal.length() == 0) return;
-        position.set(closestPoint);
         double push = (2 * staticObject.getRestitutionCoefficient() * velocity.dotProduct(lineNormal));
         Vector2D lineNormalForce = lineNormal.scaled(push);
         Vector2D frictionForce = Vector2D.difference(velocity,
                 lineNormal.scaled(velocity.dotProduct(lineNormal) / lineNormal.dotProduct(lineNormalForce))
         );
-        frictionForce.normalized();
         frictionForce.scale(staticObject.getFrictionCoefficient());
         velocity.subtract(lineNormalForce);
-        velocity.subtract(frictionForce.scaled(1 / mass));
+        velocity.subtract(frictionForce);
     }
 
     public void fix(double x, double y) {

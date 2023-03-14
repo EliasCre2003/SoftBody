@@ -1,5 +1,6 @@
 package eliascregard.interactives;
 
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
@@ -18,8 +19,8 @@ public class CircularButton extends Button {
         this.radius = radius;
     }
 
-    boolean mouseIsOver(MouseMovementHandler mousePosition) {
-        return this.position.distance(new Vector2D(mousePosition.x - radius, mousePosition.y - radius)) < this.radius;
+    boolean mouseIsOver(MouseHandler mouse) {
+        return this.position.distance(new Vector2D(mouse.getX() - radius, mouse.getY() - radius)) < this.radius;
     }
 
     public double getRadius() {

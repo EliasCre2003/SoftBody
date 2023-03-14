@@ -1,6 +1,7 @@
 package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
@@ -41,30 +42,30 @@ public class Slider {
         this("Value", startValue, min, max, 100, isHorizontal, Color.WHITE, Color.WHITE, position);
     }
 
-    public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
+    public void update(MouseHandler mouse) {
         if (this.isPressed) {
             if (this.isHorizontal) {
-                if (mousePosition.x < this.position.x) {
+                if (mouse.getX() < this.position.x) {
                     this.circlePosition.x = this.position.x;
-                } else if (mousePosition.x > this.position.x + this.length) {
+                } else if (mouse.getX() > this.position.x + this.length) {
                     this.circlePosition.x = this.position.x + this.length;
                 } else {
-                    this.circlePosition.x = mousePosition.x;
+                    this.circlePosition.x = mouse.getX();
                 }
             } else {
-                if (mousePosition.y < this.position.y) {
+                if (mouse.getY() < this.position.y) {
                     this.circlePosition.y = this.position.y;
-                } else if (mousePosition.y > this.position.y + this.length) {
+                } else if (mouse.getY() > this.position.y + this.length) {
                     this.circlePosition.y = this.position.y + this.length;
                 } else {
-                    this.circlePosition.y = mousePosition.y;
+                    this.circlePosition.y = mouse.getY();
                 }
             }
             this.value = calculateValue();
-        } else if (mouseButton.leftIsPressed) {
-            this.isPressed = this.circlePosition.distance(new Vector2D(mousePosition.x, mousePosition.y)) < 10;
+        } else if (mouse.leftIsPressed()) {
+            this.isPressed = this.circlePosition.distance(new Vector2D(mouse.getX(), mouse.getY())) < 10;
         }
-        if (!mouseButton.leftIsPressed) {
+        if (!mouse.leftIsPressed()) {
             this.isPressed = false;
         }
     }

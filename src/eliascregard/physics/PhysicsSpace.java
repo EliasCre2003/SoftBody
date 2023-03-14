@@ -2,6 +2,7 @@ package eliascregard.physics;
 
 import eliascregard.input.KeyHandler;
 import eliascregard.input.MouseButtonHandler;
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
@@ -11,7 +12,7 @@ import java.util.Arrays;
 public class PhysicsSpace {
 
     private final static SpringBody DEFAULT_SPRING_BODY = SpringBody.homogeneousRectangle(
-            800,  0, 8, 8, 1, 2000, 100, 5, 10
+            800,  0, 20, 2, 1, 2000, 100, 5, 10
     );
 
     private final static SpringBody CIRCLE_SPRING_BODY = SpringBody.homogeneousCircle(
@@ -19,7 +20,7 @@ public class PhysicsSpace {
     );
 
     private final static SpringBody TRIANGLE_SPRING_BODY = SpringBody.homogeneousTriangle(
-            800,  300, 30, 1, 10000, 150, 5, 10
+            800,  300, 30, 1, 20000, 200, 5, 10
     );
 
     private Vector2D gravity = new Vector2D();
@@ -79,14 +80,14 @@ public class PhysicsSpace {
         }
     }
 
-    public void update(double deltaTime, KeyHandler keys, MouseButtonHandler mouseButtons, MouseMovementHandler mouseMovement) {
-        handleInput(keys, mouseButtons, mouseMovement);
+    public void update(double deltaTime, KeyHandler keys, MouseHandler mouse) {
+        handleInput(keys, mouse);
         if (deltaTime > 0) {
             update(deltaTime);
         }
     }
 
-    private void handleInput(KeyHandler keys, MouseButtonHandler mouseButtons, MouseMovementHandler mouseMovement) {
+    private void handleInput(KeyHandler keys, MouseHandler mouse) {
         if (keys.enterPressed) {
             keys.enterPressed = false;
             addSpringBody(selectedBody.makeCopy());
@@ -94,7 +95,7 @@ public class PhysicsSpace {
             for (Node node : springBodies[springBodies.length - 1].nodes) {
                 double deltaX = node.position.x - node1Position.x;
                 double deltaY = node.position.y - node1Position.y;
-                node.position.set(mouseMovement.x + deltaX, mouseMovement.y + deltaY);
+                node.position.set(mouse.getX() + deltaX, mouse.getY() + deltaY);
             }
         }
 

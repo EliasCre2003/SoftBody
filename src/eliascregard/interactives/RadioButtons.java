@@ -1,6 +1,7 @@
 package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 
 import java.awt.*;
@@ -15,13 +16,13 @@ public class RadioButtons {
         this.activeSwitch = null;
     }
 
-    public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
-        if (!mouseButton.leftIsPressed) {
+    public void update(MouseHandler mouse) {
+        if (!mouse.leftIsPressed()) {
             return;
         }
         for (Switch s : this.switches) {
             boolean previousState = s.isOn;
-            s.update(mouseButton, mousePosition);
+            s.update(mouse);
             if (s.isOn != previousState) {
                 if (s.isOn) {
                     this.activeSwitch.isOn = false;

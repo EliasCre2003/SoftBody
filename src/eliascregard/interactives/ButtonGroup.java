@@ -1,6 +1,7 @@
 package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
@@ -32,9 +33,9 @@ public class ButtonGroup {
         }
     }
 
-    public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
+    public void update(MouseHandler mouse) {
         for (Button button : buttons) {
-            button.update(mouseButton, mousePosition);
+            button.update(mouse);
         }
     }
 

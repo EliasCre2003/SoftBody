@@ -1,5 +1,6 @@
 package eliascregard.interactives;
 
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
@@ -10,7 +11,7 @@ public class RectangularButton extends Button {
     private Color outlineColor = null;
     private Color insideColor;
     private final Dimension size;
-    private boolean labelIsInside = false;
+    private boolean labelIsInside;
 
     public RectangularButton(String label, Vector2D position, Color outlineColor, Color insideColor, Dimension size,
                              boolean labelIsInside)
@@ -58,9 +59,9 @@ public class RectangularButton extends Button {
 
 
 
-    boolean mouseIsOver(MouseMovementHandler mousePosition) {
-        return mousePosition.x > this.position.x && mousePosition.x < this.position.x + this.size.getWidth()
-                && mousePosition.y > this.position.y && mousePosition.y < this.position.y + this.size.getHeight();
+    boolean mouseIsOver(MouseHandler mouse) {
+        return mouse.getX() > this.position.x && mouse.getX() < this.position.x + this.size.getWidth()
+                && mouse.getY() > this.position.y && mouse.getY() < this.position.y + this.size.getHeight();
     }
 
 

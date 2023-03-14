@@ -19,8 +19,7 @@ public class GamePanel extends JPanel implements Runnable {
     int ticks = 0;
     private final GameTime time = new GameTime();
     private final KeyHandler keys = new KeyHandler();
-    private final MouseButtonHandler mouseButtons = new MouseButtonHandler();
-    private final MouseMovementHandler mouseMovement = new MouseMovementHandler(SCREEN_SCALE);
+    private final MouseHandler mouse = new MouseHandler();
     private double deltaTime;
     private int tickSpeed;
     private double renderDeltaT = 0;
@@ -75,8 +74,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setBackground(new Color(0, 0, 0));
         this.setDoubleBuffered(true);
         this.addKeyListener(keys);
-        this.addMouseListener(mouseButtons);
-        this.addMouseMotionListener(mouseMovement);
+        this.addMouseListener(mouse);
+        this.addMouseMotionListener(mouse);
         this.setFocusable(true);
     }
 
@@ -94,7 +93,7 @@ public class GamePanel extends JPanel implements Runnable {
                         new Vector2D(200, 200),
                         new Vector2D(100, 200)
                 },
-                0, 1
+                1, 1
         ));
         mainSpace.addStaticObject(new StaticObject(
                 new Vector2D[] {
@@ -103,7 +102,7 @@ public class GamePanel extends JPanel implements Runnable {
                         new Vector2D(400, 500),
                         new Vector2D(300, 300)
                 },
-                0,1
+                1,1
         ));
 
         rightClickMenu.setVisibility(false);
@@ -146,29 +145,29 @@ public class GamePanel extends JPanel implements Runnable {
             renderMode = (renderMode + 1) % 2;
         }
 
-        mainSpace.update(deltaTime, keys, mouseButtons, mouseMovement);
+        mainSpace.update(deltaTime, keys, mouse);
 
-        gravitySlider.update(mouseButtons, mouseMovement);
+        gravitySlider.update(mouse);
         mainSpace.setGravity(gravitySlider.value);
-        timeMultiplierSlider.update(mouseButtons, mouseMovement);
+        timeMultiplierSlider.update(mouse);
         timeMultiplier = timeMultiplierSlider.value;
-        frictionSlider.update(mouseButtons, mouseMovement);
+        frictionSlider.update(mouse);
         mainSpace.setBoundaryFriction(frictionSlider.value);
-        zeroGravityButton.update(mouseButtons, mouseMovement);
+        zeroGravityButton.update(mouse);
         if (zeroGravityButton.getState()) {
             Vector2D newGravity = new Vector2D(0, 0);
             gravitySlider.setValue(newGravity);
             mainSpace.setGravity(newGravity);
         }
-        if (mouseButtons.leftIsPressed) {
+        if (mouse.leftIsPressed()) {
             rightClickMenu.setVisibility(false);
         }
-        if (mouseButtons.rightIsPressed) {
-            mouseButtons.rightIsPressed = false;
+        if (mouse.leftIsPressed()) {
+            mouse.setLeftIsPressed(false);
             rightClickMenu.setVisibility(true);
-            rightClickMenu.setPosition(mouseMovement.x, mouseMovement.y);
+            rightClickMenu.setPosition(mouse.getX(), mouse.getY());
         }
-        rightClickMenu.update(mouseButtons, mouseMovement);
+        rightClickMenu.update(mouse);
         if (rightClickMenu.getButton(0).getState()) {
             mainSpace.resetSpringBodies();
         }

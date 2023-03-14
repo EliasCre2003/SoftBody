@@ -1,6 +1,7 @@
 package eliascregard.interactives;
 
 import eliascregard.input.MouseButtonHandler;
+import eliascregard.input.MouseHandler;
 import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
@@ -22,10 +23,10 @@ public class Switch {
 
     }
 
-    public void update(MouseButtonHandler mouseButton, MouseMovementHandler mousePosition) {
-        if (mouseButton.leftIsPressed) {
-            if (this.position.distance(new Vector2D(mousePosition.x - 10, mousePosition.y - 10)) < 10) {
-                mouseButton.leftIsPressed = false;
+    public void update(MouseHandler mouse) {
+        if (mouse.leftIsPressed()) {
+            if (this.position.distance(new Vector2D(mouse.getX() - 10, mouse.getY() - 10)) < 10) {
+                mouse.setLeftIsPressed(false);
                 this.isOn = !this.isOn;
             }
         }
