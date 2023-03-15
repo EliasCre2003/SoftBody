@@ -19,7 +19,7 @@ public class GamePanel extends JPanel implements Runnable {
     int ticks = 0;
     private final GameTime time = new GameTime();
     private final KeyHandler keys = new KeyHandler();
-    private final MouseHandler mouse = new MouseHandler();
+    private final MouseHandler mouse = new MouseHandler(SCREEN_SCALE);
     private double deltaTime;
     private int tickSpeed;
     private double renderDeltaT = 0;
@@ -162,8 +162,8 @@ public class GamePanel extends JPanel implements Runnable {
         if (mouse.leftIsPressed()) {
             rightClickMenu.setVisibility(false);
         }
-        if (mouse.leftIsPressed()) {
-            mouse.setLeftIsPressed(false);
+        if (mouse.rightIsPressed()) {
+            mouse.setRightIsPressed(false);
             rightClickMenu.setVisibility(true);
             rightClickMenu.setPosition(mouse.getX(), mouse.getY());
         }

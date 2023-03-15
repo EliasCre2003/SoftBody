@@ -1,9 +1,7 @@
 package eliascregard.physics;
 
 import eliascregard.input.KeyHandler;
-import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseHandler;
-import eliascregard.input.MouseMovementHandler;
 import eliascregard.math.vectors.Vector2D;
 
 import java.awt.*;
@@ -12,15 +10,19 @@ import java.util.Arrays;
 public class PhysicsSpace {
 
     private final static SpringBody DEFAULT_SPRING_BODY = SpringBody.homogeneousRectangle(
-            800,  0, 20, 2, 1, 2000, 100, 5, 10
+            0,  0, 20, 2, 1, 2000, 100, 5, 10
     );
 
-    private final static SpringBody CIRCLE_SPRING_BODY = SpringBody.homogeneousCircle(
-            800,  300, 100, 25, 3, 1500, 50, 10
+    private final static SpringBody CIRCLE_SPRING_BODY = SpringBody.simpleCircle(
+            0,  0, 100, 50, 3, 1500, 50, 5
     );
 
     private final static SpringBody TRIANGLE_SPRING_BODY = SpringBody.homogeneousTriangle(
-            800,  300, 30, 1, 20000, 200, 5, 10
+            0,  0, 15, 1, 3000, 100, 5, 10
+    );
+
+    private final static SpringBody HEXAGON_SPRING_BODY = SpringBody.homogeneousHexagon(
+            0,  0, 8, 1, 3000, 100, 5, 10
     );
 
     private Vector2D gravity = new Vector2D();
@@ -112,6 +114,11 @@ public class PhysicsSpace {
         if (keys.threePressed) {
             keys.threePressed = false;
             selectedBody = TRIANGLE_SPRING_BODY;
+        }
+
+        if (keys.fourPressed) {
+            keys.fourPressed = false;
+            selectedBody = HEXAGON_SPRING_BODY;
         }
 
         if (keys.rPressed) {
