@@ -3,7 +3,13 @@ package eliascregard.physics;
 import eliascregard.math.vectors.Vector2D;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class SpringBody {
 
@@ -151,7 +157,7 @@ public class SpringBody {
         }
         for (int i = 0; i < layers - 1; i++) {
             double currentY = y + (i + 1) * verticalLayerSpacing;
-            double startX = x - (layers - 1.5) * centerSpacing + i * centerSpacing / 2;
+            double startX = x - (2 * layers - i - 3) * centerSpacing / 2;
             for (int j = 0; j < 2 * layers - 2 - i; j++) {
                 nodes[nodeIndex] = new Node(new Vector2D(startX + j * centerSpacing, currentY), nodeMass, nodeRadius);
                 nodeIndex++;
@@ -219,97 +225,6 @@ public class SpringBody {
 
         }
 
-//        double startX1 = x - (layers - 1) * centerSpacing;
-//        double startX2 = x + (layers - 1) * centerSpacing;
-//        for (int i = 0; i < 2 * (layers - 1); i++) {
-//            if (i < layers - 1) {
-//                nodes[nodeIndex] = new Node(new Vector2D(startX1 + i * centerSpacing, y), nodeMass, nodeRadius);
-//            }
-//            else {
-//                nodes[nodeIndex] = new Node(new Vector2D(startX1 + (i+1) * centerSpacing, y), nodeMass, nodeRadius);
-//            }
-//            nodeIndex++;
-//        }
-//        for (int i = 0; i < layers - 1; i++) {
-//            double startX = startX1 + (layers - i - 1) * centerSpacing / 2;
-//            Vector2D startPosition1 = new Vector2D(
-//                    startX,
-//                    y - verticalLayerSpacing * layers + verticalLayerSpacing * (i + 1)
-//            );
-//            Vector2D startPosition2 = new Vector2D(
-//                    startX,
-//                    y + layers * verticalLayerSpacing - verticalLayerSpacing * (i + 1)
-//            );
-//            for (int j = 0; j < layers + i; j++) {
-//                nodes[nodeIndex] = new Node(new Vector2D(
-//                        startPosition1.x + j * centerSpacing, startPosition1.y
-//                ), nodeMass, nodeRadius);
-//                nodes[nodeIndex + 1] = new Node(new Vector2D(
-//                        startPosition2.x + j * centerSpacing, startPosition2.y
-//                ), nodeMass, nodeRadius);
-//                nodeIndex += 2;
-//            }
-//        }
-//
-//        // SPRINGS
-//        Spring[] springs = new Spring[140];
-//        int springIndex = 0;
-//        int nodeStartIndex = 2 * layers - 1;
-//        for (int i = 0; i < layers - 1; i++) {
-//            for (int j = 0; j < 2; j++) {
-//                int node1 = nodeStartIndex + 2 * i + j;
-//                int node2 = node1 + 2;
-//                springs[springIndex] = new Spring(
-//                        nodes[node1], nodes[node2],
-//                        springStiffness, springDampingFactor
-//                );
-//                springIndex++;
-//            }
-//        }
-//        for (int i = 0; i < layers - 2; i++) {
-//            for (int j = 0; j < layers + i; j++){
-//                for (int k = 0; k < 2; k++) {
-//                    int node1 = nodeStartIndex + 2 * j + k;
-//                    int node2 = nodeStartIndex + 2 * layers + 2 * j + k;
-//                    int node3 = nodeStartIndex + 2 * layers + 2 * j + k + 2;
-//                    springs[springIndex] = new Spring(
-//                            nodes[node1], nodes[node2],
-//                            springStiffness, springDampingFactor
-//                    );
-//                    springs[springIndex+1] = new Spring(
-//                            nodes[node1], nodes[node3],
-//                            springStiffness, springDampingFactor
-//                    );
-//                    springs[springIndex+2] = new Spring(
-//                            nodes[node2], nodes[node3],
-//                            springStiffness, springDampingFactor
-//                    );
-//                    springIndex += 3;
-//                }
-//            }
-//        }
-//        nodeStartIndex = 1;
-//        for (int i = 0; i < layers - 2; i++) {
-//            for (int j = 0; j < 2; j++) {
-//                for (int k = 0; k < 2; k++) {
-//                    int node1 = nodeStartIndex + 2 * i + j;
-//                    int node2 = nodes.length - 2 - 2 * layers + 2 * j * layers - 2 * i * (2 * j - 1) + k;
-//                    System.out.println(node2);
-//                    int node3 = node1 + 2;
-//                    springs[springIndex] = new Spring(
-//                            nodes[node1], nodes[node2],
-//                            springStiffness, springDampingFactor
-//                    );
-//                    springs[springIndex+1] = new Spring(
-//                            nodes[node1], nodes[node3],
-//                            springStiffness, springDampingFactor
-//                    );
-//                    springIndex += 2;
-//                }
-//            }
-//        }
-
-
         return new SpringBody(nodes, springs);
 
     }
@@ -344,35 +259,69 @@ public class SpringBody {
         return new SpringBody(nodes, springs);
     }
 
-//    public void saveAs(String filename) {
-//        try {
-//            FileOutputStream fileOut = new FileOutputStream(filename);
-//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-//            out.writeObject(this);
-//            out.close();
-//            fileOut.close();
-//        } catch (IOException i) {
-//            i.printStackTrace();
-//        }
-//    }
-//
-//    public static SpringBody load(String path) {
-//        try {
-//            FileInputStream fileIn = new FileInputStream(path);
-//            ObjectInputStream in = new ObjectInputStream(fileIn);
-//            SpringBody body = (SpringBody) in.readObject();
-//            in.close();
-//            fileIn.close();
-//            return body;
-//        } catch (IOException i) {
-//            i.printStackTrace();
-//            return null;
-//        } catch (ClassNotFoundException c) {
-//            System.out.println("SpringBody class not found");
-//            c.printStackTrace();
-//            return null;
-//        }
-//    }
+    public void saveAs(String path) {
+        try {
+            File saveFile = new File(path);
+            if (saveFile.createNewFile()) {
+                System.out.println("File created: " + saveFile.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+            StringBuilder bodyString = new StringBuilder();
+            for (Node node : nodes) {
+                String newNode =
+                        node.position.x + " " + node.position.y + " " + node.mass + " " + node.radius + " "
+                        + node.isFixed + "; ";
+                bodyString.append(newNode);
+            }
+            bodyString.append("\n");
+            List<Node> nodesList = Arrays.asList(nodes);
+            for (Spring spring : springs) {
+                String newSpring =
+                        nodesList.indexOf(spring.node1) + " " + nodesList.indexOf(spring.node2) + " " +
+                        spring.stiffness + " " + spring.dampingFactor + "; ";
+                bodyString.append(newSpring);
+            }
+            FileWriter fileWriter = new FileWriter(path);
+            fileWriter.write(bodyString.toString());
+            fileWriter.close();
+        } catch (IOException e) {
+            System.out.println("Body couldn't be saved for some reason.");
+            e.printStackTrace();
+        }
+    }
+
+    public static SpringBody load(String path) {
+        try {
+            File bodyFile = new File(path);
+            Scanner fileReader = new Scanner(bodyFile);
+            String[] nodesStrings = fileReader.nextLine().split("; ");
+            Node[] nodes = new Node[nodesStrings.length];
+            for (int i = 0; i < nodesStrings.length; i++) {
+                String[] nodeStrings = nodesStrings[i].split(" ");
+                nodes[i] = new Node(
+                        new Vector2D(Double.parseDouble(nodeStrings[0]), Double.parseDouble(nodeStrings[1])),
+                        Double.parseDouble(nodeStrings[2]), Double.parseDouble(nodeStrings[3]),
+                        Boolean.parseBoolean(nodeStrings[4])
+                );
+            }
+            String[] springsStrings = fileReader.nextLine().split("; ");
+            Spring[] springs = new Spring[springsStrings.length];
+            for (int i = 0; i < springsStrings.length; i++) {
+                String[] springStrings = springsStrings[i].split(" ");
+                springs[i] = new Spring(
+                        nodes[Integer.parseInt(springStrings[0])],
+                        nodes[Integer.parseInt(springStrings[1])],
+                        Double.parseDouble(springStrings[2]),
+                        Double.parseDouble(springStrings[3])
+                );
+            }
+            return new SpringBody(nodes, springs);
+        } catch (FileNotFoundException e) {
+            System.out.println("File \"" + path + "\" was not found");
+            return null;
+        }
+    }
 
     public void render(Graphics2D g2, double scale, int renderingMode) {
         for (Spring spring : this.springs) {

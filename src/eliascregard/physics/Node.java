@@ -13,16 +13,18 @@ public class Node {
     public double mass;
     public double radius;
     public Vector2D totalForceVector;
-    private boolean isFixed;
+    public boolean isFixed;
 
-    public Node(Vector2D position, double mass, double radius) {
+    public Node(Vector2D position, double mass, double radius, boolean isFixed) {
         this.position = position;
         this.velocity = new Vector2D();
         this.mass = mass;
         this.radius = radius;
         this.totalForceVector = new Vector2D();
         this.isFixed = false;
-
+    }
+    public Node(Vector2D position, double mass, double radius) {
+        this(position, mass, radius, false);
     }
     public Node(Vector2D position) {
         this(position, 1, DEFAULT_NODE_RADIUS);

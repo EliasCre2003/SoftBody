@@ -22,7 +22,7 @@ public class PhysicsSpace {
     );
 
     private final static SpringBody HEXAGON_SPRING_BODY = SpringBody.homogeneousHexagon(
-            0,  0, 8, 1, 3000, 100, 5, 10
+            0,  0, 4, 1, 3000, 100, 5, 10
     );
 
     private Vector2D gravity = new Vector2D();
@@ -41,6 +41,8 @@ public class PhysicsSpace {
 
     public PhysicsSpace(Vector2D gravity) {
         this.gravity = gravity;
+        addSpringBody(SpringBody.load("Default.txt"));
+
     }
 
     private void update(double deltaTime) {
