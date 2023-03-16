@@ -3,7 +3,7 @@ package eliascregard.main;
 import eliascregard.input.*;
 import eliascregard.interactives.*;
 import eliascregard.interactives.ButtonGroup;
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 import eliascregard.physics.*;
 
 import javax.swing.*;
@@ -28,32 +28,32 @@ public class GamePanel extends JPanel implements Runnable {
     private int renderMode = 0;
 
     private final Slider2D gravitySlider = new Slider2D(
-            new Vector2D(0, 500), -1000, 1000, -1000, 1000,
+            new Vector2(0, 500), -1000, 1000, -1000, 1000,
             new Dimension(200, 200), new Color(255, 0, 0), new Color(255,255,255),
-            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 15)
+            new Vector2(DEFAULT_SCREEN_SIZE.width - 15 - 200, 15)
     );
     private final PhysicsSpace mainSpace = new PhysicsSpace(gravitySlider.value);
 
     private final Slider timeMultiplierSlider = new Slider(
             "Time", 1, 0, 2, 200, true,
             new Color(255,0,0), new Color(255,255,255),
-            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 230)
+            new Vector2(DEFAULT_SCREEN_SIZE.width - 15 - 200, 230)
     );
     private double timeMultiplier = timeMultiplierSlider.value;
 
     private final Slider frictionSlider = new Slider(
             "Friction", 0.1, 0, 1, 200, true,
             new Color(255,0,0), new Color(255,255,255),
-            new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 270)
+            new Vector2(DEFAULT_SCREEN_SIZE.width - 15 - 200, 270)
     );
     private double friction = frictionSlider.value;
 
     private final CircularButton zeroGravityButton = new CircularButton(
-            "Zero Gravity", new Vector2D(DEFAULT_SCREEN_SIZE.width - 15 - 200, 300),
+            "Zero Gravity", new Vector2(DEFAULT_SCREEN_SIZE.width - 15 - 200, 300),
             new Color(255, 255, 255), new Color(255, 0, 0), 10
     );
 
-    private final ButtonGroup rightClickMenu = new ButtonGroup(new Vector2D(0,0));
+    private final ButtonGroup rightClickMenu = new ButtonGroup(new Vector2(0,0));
 
     private void sleep(int nanoseconds) {
         try {
@@ -84,29 +84,29 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
 
         mainSpace.setGravity(gravitySlider.value);
-        mainSpace.setBoundary(new Boundary(new Vector2D(0, 0), DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height, 100000, 0, 1));
+        mainSpace.setBoundary(new Boundary(new Vector2(0, 0), DEFAULT_SCREEN_SIZE.width, DEFAULT_SCREEN_SIZE.height, 100000, 0, 1));
 
         mainSpace.addStaticObject(new StaticObject(
-                new Vector2D[] {
-                        new Vector2D(100, 100),
-                        new Vector2D(200, 100),
-                        new Vector2D(200, 200),
-                        new Vector2D(100, 200)
+                new Vector2[] {
+                        new Vector2(100, 100),
+                        new Vector2(200, 100),
+                        new Vector2(200, 200),
+                        new Vector2(100, 200)
                 },
                 1, 1
         ));
         mainSpace.addStaticObject(new StaticObject(
-                new Vector2D[] {
-                        new Vector2D(300, 100),
-                        new Vector2D(400, 300),
-                        new Vector2D(400, 500),
-                        new Vector2D(300, 300)
+                new Vector2[] {
+                        new Vector2(300, 100),
+                        new Vector2(400, 300),
+                        new Vector2(400, 500),
+                        new Vector2(300, 300)
                 },
                 1,1
         ));
 
         rightClickMenu.setVisibility(false);
-        rightClickMenu.addButton(new RectangularButton("Reset", new Vector2D(0,0), new Color(25,25,25),
+        rightClickMenu.addButton(new RectangularButton("Reset", new Vector2(0,0), new Color(25,25,25),
                 new Dimension(150, 35), true));
 
         while (gameThread != null) {
@@ -155,7 +155,7 @@ public class GamePanel extends JPanel implements Runnable {
         mainSpace.setBoundaryFriction(frictionSlider.value);
         zeroGravityButton.update(mouse);
         if (zeroGravityButton.getState()) {
-            Vector2D newGravity = new Vector2D(0, 0);
+            Vector2 newGravity = new Vector2(0, 0);
             gravitySlider.setValue(newGravity);
             mainSpace.setGravity(newGravity);
         }

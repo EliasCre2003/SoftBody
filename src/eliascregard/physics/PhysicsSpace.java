@@ -2,7 +2,7 @@ package eliascregard.physics;
 
 import eliascregard.input.KeyHandler;
 import eliascregard.input.MouseHandler;
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -25,11 +25,11 @@ public class PhysicsSpace {
             0,  0, 4, 1, 3000, 100, 5, 10
     );
 
-    private Vector2D gravity = new Vector2D();
+    private Vector2 gravity = new Vector2();
     private SpringBody[] springBodies = new SpringBody[0];
     private StaticObject[] staticObjects = new StaticObject[0];
     private Boundary boundary = null;
-    private final Vector2D movement = new Vector2D();
+    private final Vector2 movement = new Vector2();
     private int totalNodes = 0;
     private int totalSprings = 0;
     private SpringBody selectedBody = DEFAULT_SPRING_BODY;
@@ -39,7 +39,7 @@ public class PhysicsSpace {
     public PhysicsSpace() {
     }
 
-    public PhysicsSpace(Vector2D gravity) {
+    public PhysicsSpace(Vector2 gravity) {
         this.gravity = gravity;
         addSpringBody(SpringBody.load("Default.txt"));
 
@@ -55,8 +55,8 @@ public class PhysicsSpace {
                 node.velocity.add(movement);
 
                 if (boundary != null) {
-                    if (node.position.x > boundary.position.x + boundary.width || node.position.x < boundary.position.x
-                            || node.position.y > boundary.position.y + boundary.height || node.position.y < boundary.position.y) {
+                    if (node.position.getX() > boundary.position.getX() + boundary.width || node.position.getX() < boundary.position.getX()
+                        || node.position.getY() > boundary.position.getY() + boundary.height || node.position.getY() < boundary.position.getY()) {
                         node.resolveCollision(boundary);
                     }
                 }
@@ -95,10 +95,10 @@ public class PhysicsSpace {
         if (keys.enterPressed) {
             keys.enterPressed = false;
             addSpringBody(selectedBody.makeCopy());
-            Vector2D node1Position = selectedBody.nodes[0].position;
+            Vector2 node1Position = selectedBody.nodes[0].position;
             for (Node node : springBodies[springBodies.length - 1].nodes) {
-                double deltaX = node.position.x - node1Position.x;
-                double deltaY = node.position.y - node1Position.y;
+                double deltaX = node.position.getX() - node1Position.getX();
+                double deltaY = node.position.getY() - node1Position.getY();
                 node.position.set(mouse.getX() + deltaX, mouse.getY() + deltaY);
             }
         }
@@ -130,27 +130,27 @@ public class PhysicsSpace {
 
         if (keys.rightPressed) {
             keys.rightPressed = false;
-            movement.x += 1000;
+            movement.setX(movement.getX() + 1000);
         }
         if (keys.leftPressed) {
             keys.leftPressed = false;
-            movement.x -= 1000;
+            movement.setX(movement.getX() - 1000);
         }
         if (keys.upPressed) {
             keys.upPressed = false;
-            movement.y -= 1000;
+            movement.setY(movement.getY() - 1000);
         }
         if (keys.downPressed) {
             keys.downPressed = false;
-            movement.y += 1000;
+            movement.setY(movement.getY() + 1000);
         }
     }
 
-    public void setGravity(Vector2D gravity) {
+    public void setGravity(Vector2 gravity) {
         this.gravity = gravity;
     }
 
-    public Vector2D getGravity() {
+    public Vector2 getGravity() {
         return this.gravity;
     }
 

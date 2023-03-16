@@ -118,6 +118,13 @@ public class Matrix {
         }
         return newMatrix;
     }
+    public void scale(double scalar) {
+        for (int i = 1; i <= numOfRows; i++) {
+            for (int j = 1; j <= numOfColumns; j++) {
+                set(i, j, get(i, j) * scalar);
+            }
+        }
+    }
 
     private int[][] getPermutations(int n) {
         int numberOfPermutations = 1;
@@ -159,28 +166,22 @@ public class Matrix {
             throw new IllegalArgumentException("Matrix must be square to calculate determinant.");
         }
         if (numOfRows == 1) {
-            return get(0, 0);
+            return get(1, 1);
         }
-        if (numOfRows == 2) {
-            return get(0, 0) * get(1, 1) - get(0, 1) * get(1, 0);
-        }
-        double size = numOfRows;
-        double determinant = 0;
-        // TODO: Implement the Leibniz formula for determinant calculation for matrices
-        // bigger than 2.
-        // for ()
-
-        return determinant;
+        return determinantInner(this);
     }
-
-    public Matrix gaussElimination() {
-        if (!isSquare() && !(numOfRows == numOfColumns + 1)) {
-            throw new IllegalArgumentException(
-                    "Matrix must be square or have one more column than rows to perform Gauss elimination.");
+    private static double determinantInner(Matrix matrix) {
+        if (matrix.numOfRows == 2) {
+            return matrix.get(1, 1) * matrix.get(2, 2) - matrix.get(1, 2) * matrix.get(2, 1);
         }
-        Matrix newMatrix = new Matrix(numOfRows, numOfColumns);
-
-        return newMatrix;
+        double determinant = 0;
+        for (int i = 0; i < matrix.numOfRows; i++) {
+            int sign = (int) Math.pow(-1, i);
+            double scalar = matrix.get(1, i + 1) * sign;
+            Matrix subMatrix = matrix.subMatrix(1, i + 1);
+            determinant += scalar * determinantInner(subMatrix);
+        }
+        return determinant;
     }
 
     public boolean isSquare() {
@@ -188,23 +189,17 @@ public class Matrix {
     }
 
     public boolean isSymmetric() {
-        if (!isSquare()) {
-            return false;
-        }
+        if (!isSquare()) return false;
         return this == transpose();
     }
 
     public boolean isSkewSymmetric() {
-        if (!isSquare()) {
-            return false;
-        }
+        if (!isSquare()) return false;
         return this == transpose().scaled(-1);
     }
 
     public boolean isIdentity() {
-        if (!isSquare()) {
-            return false;
-        }
+        if (!isSquare()) return false;
         return this == Matrix.identity(numOfRows);
     }
 
@@ -239,19 +234,40 @@ public class Matrix {
         return C;
     }
 
-    public static Matrix submatrix(Matrix matrix, int row, int column) {
-        if (row < 1 || column < 1 || row > matrix.numOfRows || column > matrix.numOfColumns) {
-            throw new IllegalArgumentException("Row and column must be within the dimensions of the matrix.");
-        }
-        Matrix newMatrix = new Matrix(matrix.numOfRows - 1, matrix.numOfColumns - 1);
-        for (int i = 1; i <= matrix.numOfRows; i++) {
-            for (int j = 1; j <= matrix.numOfColumns; j++) {
-                if (i != row && j != column) {
-                    newMatrix.set(i, j, matrix.get(i, j));
-                }
+    public static Matrix subMatrix(Matrix matrix, int[] rows, int[] columns) {
+        boolean[] rowsToRemove = new boolean[matrix.numOfRows];
+        for (int row : rows) {
+            if (row < 1 || row > matrix.numOfRows) {
+                throw new IllegalArgumentException("Row must be within the dimensions of the matrix.");
             }
+            rowsToRemove[row - 1] = true;
+        }
+        boolean[] columnsToRemove = new boolean[matrix.numOfColumns];
+        for (int column : columns) {
+            if (column < 1 || column > matrix.numOfColumns) {
+                throw new IllegalArgumentException("Column must be within the dimensions of the matrix.");
+            }
+            columnsToRemove[column - 1] = true;
+        }
+        Matrix newMatrix = new Matrix(matrix.numOfRows - rows.length, matrix.numOfColumns - columns.length);
+        int newRow = 1;
+        for (int i = 1; i <= matrix.numOfRows; i++) {
+            if (rowsToRemove[i - 1]) continue;
+            int newColumn = 1;
+            for (int j = 1; j <= matrix.numOfColumns; j++) {
+                if (columnsToRemove[j - 1]) continue;
+                newMatrix.set(newRow, newColumn, matrix.get(i, j));
+                newColumn++;
+            }
+            newRow++;
         }
         return newMatrix;
+    }
+    public Matrix subMatrix(int[] rows, int[] columns) {
+        return subMatrix(this, rows, columns);
+    }
+    public Matrix subMatrix(int row, int column) {
+        return subMatrix(this, new int[]{row}, new int[]{column});
     }
 
     public static Matrix identity(int size) {
@@ -273,11 +289,7 @@ public class Matrix {
     }
 
     public static Matrix gaussEliminated(Matrix matrix) {
-        if (!(matrix.isSquare() || matrix.numOfRows == matrix.numOfColumns - 1)) {
-            throw new IllegalArgumentException(
-                    "Matrix must be square or have one more column than rows to perform Gauss elimination."
-            );
-        }
+
         Matrix result = matrix.copy();
         for (int i = 1; i <= result.numOfRows; i++) {
             if (result.get(i, i) == 0) continue;
@@ -307,6 +319,52 @@ public class Matrix {
         return result;
     }
 
+    public static Matrix combineHorizontally(Matrix A, Matrix B) {
+        if (A.numOfRows != B.numOfRows) {
+            throw new IllegalArgumentException("Matrices must have the same number of rows.");
+        }
+        Matrix matrix = new Matrix(A.numOfRows, A.numOfColumns + B.numOfColumns);
+        for (int i = 1; i <= A.numOfRows; i++) {
+            for (int j = 1; j <= A.numOfRows; j++) {
+                matrix.set(i, j, A.get(i, j));
+            }
+            for (int j = 1; j <= B.numOfColumns; j++) {
+                matrix.set(i, j + A.numOfColumns, B.get(i, j));
+            }
+        }
+        return matrix;
+    }
+    public static Matrix combineVertically(Matrix A, Matrix B) {
+        if (A.numOfColumns != B.numOfColumns) {
+            throw new IllegalArgumentException("Matrices must have the same number of columns.");
+        }
+        Matrix matrix = new Matrix(A.numOfRows + B.numOfRows, A.numOfColumns);
+        for (int i = 1; i <= A.numOfRows; i++) {
+            for (int j = 1; j <= A.numOfColumns; j++) {
+                matrix.set(i, j, A.get(i, j));
+            }
+        }
+        for (int i = 1; i <= B.numOfRows; i++) {
+            for (int j = 1; j <= B.numOfColumns; j++) {
+                matrix.set(i + A.numOfRows, j, B.get(i, j));
+            }
+        }
+        return matrix;
+    }
+
+    public Matrix inverse() {
+        if (!isSquare()) {
+            throw new IllegalArgumentException("Matrix must be square have an inverse.");
+        }
+        Matrix matrix = combineHorizontally(this, identity(numOfRows));
+        matrix = gaussEliminated(matrix);
+        int[] columns = new int[numOfColumns];
+        for (int i = 1; i <= numOfColumns; i++) {
+            columns[i-1] = i;
+        }
+        return matrix.subMatrix(new int[0], columns);
+    }
+
     private void scaleRow(int i, double factor) {
         if (i < 1 || i > numOfRows) {
             throw new IllegalArgumentException("Row must be within the dimensions of the matrix.");
@@ -317,9 +375,7 @@ public class Matrix {
     public Matrix copy() {
         Matrix matrix = new Matrix(numOfRows, numOfColumns);
         for (int i = 1; i <= numOfRows; i++) {
-            for (int j = 1; j <= numOfColumns; j++) {
-                matrix.set(i, j, get(i, j));
-            }
+            matrix.setRow(i, rowAt(i).copy());
         }
         return matrix;
     }
@@ -333,18 +389,12 @@ public class Matrix {
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof Matrix)) {
-            return false;
-        }
-        Matrix matrix = (Matrix) object;
-        if (numOfRows != matrix.numOfRows || numOfColumns != matrix.numOfColumns) {
-            return false;
-        }
+        if (!(object instanceof Matrix matrix)) return false;
+        if (numOfRows != matrix.numOfRows || numOfColumns != matrix.numOfColumns) return false;
+
         for (int i = 1; i <= numOfRows; i++) {
             for (int j = 1; j <= numOfColumns; j++) {
-                if (get(i, j) != matrix.get(i, j)) {
-                    return false;
-                }
+                if (get(i, j) != matrix.get(i, j)) return false;
             }
         }
         return true;
@@ -352,14 +402,18 @@ public class Matrix {
 
     public static void main(String[] args) {
         Matrix matrix = new Matrix(new double[][]{
-                {1, 2, 3, 12},
-                {4, 5, 6, 56},
-                {7, 8, 9, 9 }
+                {2,  5, -3,  2},
+                {4,  2, -6, -3},
+                {5, -4, -1,  0},
+                {5,  6,  3,  8}
         });
         System.out.println(matrix);
-        System.out.println(Matrix.gaussEliminated(matrix));
+        Matrix inverse = matrix.inverse();
+        System.out.println(Matrix.multiplication(matrix, inverse));
+
     }
 }
+
 
 class Row {
     private final double[] cells;
@@ -440,9 +494,7 @@ class Row {
 
     Row copy() {
         Row newRow = new Row(numberOfColumns);
-        for (int i = 0; i < numberOfColumns; i++) {
-            newRow.cells[i] = cells[i];
-        }
+        if (numberOfColumns >= 0) System.arraycopy(cells, 0, newRow.cells, 0, numberOfColumns);
         return newRow;
     }
 
@@ -458,10 +510,9 @@ class Row {
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof Row)) {
+        if (!(object instanceof Row row)) {
             return false;
         }
-        Row row = (Row) object;
         if (this.numberOfColumns != row.numberOfColumns) {
             return false;
         }

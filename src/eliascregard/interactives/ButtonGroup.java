@@ -1,20 +1,18 @@
 package eliascregard.interactives;
 
-import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseHandler;
-import eliascregard.input.MouseMovementHandler;
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 
 import java.awt.*;
 import java.util.Arrays;
 
 public class ButtonGroup {
 
-    private Vector2D position;
+    private Vector2 position;
     private Button[] buttons = new Button[0];
     private boolean isVisible = true;
 
-    public ButtonGroup(Vector2D position) {
+    public ButtonGroup(Vector2 position) {
         this.position = position;
     }
 
@@ -39,17 +37,17 @@ public class ButtonGroup {
         }
     }
 
-    public void setPosition(Vector2D position) {
+    public void setPosition(Vector2 position) {
         for (Button button : buttons) {
-            button.position.add(Vector2D.difference(position, this.position));
+            button.position.add(Vector2.difference(position, this.position));
         }
         this.position = position;
     }
     public void setPosition(double x, double y) {
-        this.setPosition(new Vector2D(x, y));
+        this.setPosition(new Vector2(x, y));
     }
 
-    public Vector2D getPosition() {
+    public Vector2 getPosition() {
         return this.position;
     }
 

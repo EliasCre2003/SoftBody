@@ -1,27 +1,27 @@
 package eliascregard.physics;
 
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 
 public class Boundary extends StaticObject{
-    Vector2D position;
+    Vector2 position;
     double width;
     double height;
     double thickness;
 
-    public Boundary(Vector2D position, double width, double height, double thickness, double restitution, double friction) {
-        super(new Vector2D[] {
-                new Vector2D(position.x + width / 2, position.y - thickness),
-                new Vector2D(position.x + width + thickness, position.y - thickness),
-                new Vector2D(position.x + width + thickness, position.y + height + thickness),
-                new Vector2D(position.x - thickness, position.y + height + thickness),
-                new Vector2D(position.x - thickness, position.y - thickness),
-                new Vector2D(position.x + width / 2, position.y - thickness),
-                new Vector2D(position.x +  width / 2, position.y),
-                new Vector2D(position.x, position.y),
-                new Vector2D(position.x, height),
-                new Vector2D(position.x + width, height),
-                new Vector2D(position.x + width, position.y),
-                new Vector2D(position.x + width / 2, position.y)
+    public Boundary(Vector2 position, double width, double height, double thickness, double restitution, double friction) {
+        super(new Vector2[] {
+                new Vector2(position.getX() + width / 2, position.getY() - thickness),
+                new Vector2(position.getX() + width + thickness, position.getY() - thickness),
+                new Vector2(position.getX() + width + thickness, position.getY() + height + thickness),
+                new Vector2(position.getX() - thickness, position.getY() + height + thickness),
+                new Vector2(position.getX() - thickness, position.getY() - thickness),
+                new Vector2(position.getX() + width / 2, position.getY() - thickness),
+                new Vector2(position.getX() +  width / 2, position.getY()),
+                new Vector2(position.getX(), position.getY()),
+                new Vector2(position.getX(), height),
+                new Vector2(position.getX() + width, height),
+                new Vector2(position.getX() + width, position.getY()),
+                new Vector2(position.getX() + width / 2, position.getY())
         }, restitution, friction);
         this.position = position;
         this.width = width;

@@ -1,6 +1,6 @@
 package eliascregard.physics;
 
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 
 import java.awt.*;
 import java.io.File;
@@ -20,7 +20,7 @@ public class SpringBody {
         this.nodes = nodes;
         this.springs = springs;
     }
-    public void update(double deltaTime, Vector2D gravity) {
+    public void update(double deltaTime, Vector2 gravity) {
         for (Node node : nodes) {
             node.update(deltaTime, gravity);
         }
@@ -48,7 +48,7 @@ public class SpringBody {
         int springIndex = 0;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                nodes[nodeIndex] = new Node(new Vector2D(
+                nodes[nodeIndex] = new Node(new Vector2(
                         x + i * (2*nodeRadius + spacing), y+nodeRadius + j * (2*nodeRadius + spacing)),
                         nodeMass, nodeRadius);
                 nodeIndex++;
@@ -90,7 +90,7 @@ public class SpringBody {
         double verticalStep = centerSpacing * Math.sin(Math.PI / 3);
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < i + 1; j++) {
-                Vector2D position = new Vector2D(x - i * centerSpacing / 2 + j * centerSpacing, y + i * verticalStep);
+                Vector2 position = new Vector2(x - i * centerSpacing / 2 + j * centerSpacing, y + i * verticalStep);
                 nodes[nodeIndex] = new Node(position, nodeMass, nodeRadius);
                 nodeIndex++;
             }
@@ -121,10 +121,10 @@ public class SpringBody {
         Node[] nodes = new Node[segments + 1];
         Spring[] springs = new Spring[segments * 2];
 
-        nodes[0] = new Node(new Vector2D(x, y), (segments / 2.0) * nodeMass, nodeRadius);
+        nodes[0] = new Node(new Vector2(x, y), (segments / 2.0) * nodeMass, nodeRadius);
         double theta = 0;
         for (int i = 0; i < segments; i++) {
-            nodes[i+1] = new Node(new Vector2D(
+            nodes[i+1] = new Node(new Vector2(
                     x + radius * Math.cos(theta), y + radius * Math.sin(theta)), nodeMass, nodeRadius
             );
             theta += 2 * Math.PI / segments;
@@ -141,7 +141,7 @@ public class SpringBody {
                                                double springDampingFactor, double spacing, double nodeRadius) {
         // NODES
         Node[] nodes = new Node[3 * layers * (layers - 1) + 1];
-        nodes[0] = new Node(new Vector2D(x, y), nodeMass, nodeRadius);
+        nodes[0] = new Node(new Vector2(x, y), nodeMass, nodeRadius);
         double centerSpacing = spacing + 2 * nodeRadius;
         double verticalLayerSpacing = centerSpacing * Math.sin(Math.PI / 3);
         int nodeIndex = 1;
@@ -151,7 +151,7 @@ public class SpringBody {
             double startX = x - (layers - 1 + i) * centerSpacing / 2;
             for (int j = 0; j < layers + i; j++) {
                 if (i == layers - 1 && j == layers - 1) continue;
-                nodes[nodeIndex] = new Node(new Vector2D(startX + j * centerSpacing, currentY), nodeMass, nodeRadius);
+                nodes[nodeIndex] = new Node(new Vector2(startX + j * centerSpacing, currentY), nodeMass, nodeRadius);
                 nodeIndex++;
             }
         }
@@ -159,7 +159,7 @@ public class SpringBody {
             double currentY = y + (i + 1) * verticalLayerSpacing;
             double startX = x - (2 * layers - i - 3) * centerSpacing / 2;
             for (int j = 0; j < 2 * layers - 2 - i; j++) {
-                nodes[nodeIndex] = new Node(new Vector2D(startX + j * centerSpacing, currentY), nodeMass, nodeRadius);
+                nodes[nodeIndex] = new Node(new Vector2(startX + j * centerSpacing, currentY), nodeMass, nodeRadius);
                 nodeIndex++;
             }
         }
@@ -270,7 +270,7 @@ public class SpringBody {
             StringBuilder bodyString = new StringBuilder();
             for (Node node : nodes) {
                 String newNode =
-                        node.position.x + " " + node.position.y + " " + node.mass + " " + node.radius + " "
+                        node.position.getX() + " " + node.position.getY() + " " + node.mass + " " + node.radius + " "
                         + node.isFixed + "; ";
                 bodyString.append(newNode);
             }
@@ -300,7 +300,7 @@ public class SpringBody {
             for (int i = 0; i < nodesStrings.length; i++) {
                 String[] nodeStrings = nodesStrings[i].split(" ");
                 nodes[i] = new Node(
-                        new Vector2D(Double.parseDouble(nodeStrings[0]), Double.parseDouble(nodeStrings[1])),
+                        new Vector2(Double.parseDouble(nodeStrings[0]), Double.parseDouble(nodeStrings[1])),
                         Double.parseDouble(nodeStrings[2]), Double.parseDouble(nodeStrings[3]),
                         Boolean.parseBoolean(nodeStrings[4])
                 );
@@ -333,8 +333,9 @@ public class SpringBody {
         if (renderingMode == 1) {
             g2.setColor(new Color(0,255,0));
             for (Node node : this.nodes) {
-                Point p1 = new Point((int)(node.position.x*scale), (int)(node.position.y*scale));
-                Point p2 = new Point((int)((node.position.x + node.velocity.x * 0.1)*scale), (int)((node.position.y + node.velocity.y * 0.1)*scale));
+                Point p1 = new Point((int)(node.position.getX()*scale), (int)(node.position.getY()*scale));
+                Point p2 = new Point((int)((node.position.getX() + node.velocity.getX() * 0.1)*scale),
+                        (int)((node.position.getY() + node.velocity.getY() * 0.1)*scale));
                 g2.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
         }

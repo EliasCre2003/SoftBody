@@ -1,36 +1,36 @@
 package eliascregard.physics;
 
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 
 import java.awt.*;
 
 public class RigidBody {
 
-    private Vector2D position;
-    private Vector2D linearVelocity;
+    private Vector2 position;
+    private Vector2 linearVelocity;
     private double angle;
     private double angularVelocity;
     private double torque;
-    private Vector2D force;
+    private Vector2 force;
     private double mass;
     private double momentOfInertia;
-    private Vector2D[] vertices;
+    private Vector2[] vertices;
     private Perimeter perimeter;
 
-    public RigidBody(Vector2D position, double width, double height, double mass, Vector2D[] vertices) {
+    public RigidBody(Vector2 position, double width, double height, double mass, Vector2[] vertices) {
         this.position = position;
-        this.linearVelocity = new Vector2D();
+        this.linearVelocity = new Vector2();
         this.angle = angle;
         this.angularVelocity = 0;
         this.torque = 0;
-        this.force = new Vector2D();
+        this.force = new Vector2();
         this.mass = mass;
         this.momentOfInertia = mass * (width * width + height * height) / 12;
         this.vertices = vertices;
         calculatePerimeter();
     }
 
-    public void update(double deltaTime, Vector2D gravity) {
+    public void update(double deltaTime, Vector2 gravity) {
         this.linearVelocity.add(gravity, deltaTime);
         this.linearVelocity.add(this.force, deltaTime / this.mass);
         this.position.add(this.linearVelocity, deltaTime);
@@ -41,49 +41,49 @@ public class RigidBody {
         calculatePerimeter();
     }
     public void update(double deltaTime) {
-        this.update(deltaTime, new Vector2D(0, 9.82));
+        this.update(deltaTime, new Vector2(0, 9.82));
     }
 
-    public void applyForce(Vector2D force, Vector2D torqueArm) {
+    public void applyForce(Vector2 force, Vector2 torqueArm) {
         this.force.add(force);
-        torque += force.crossProduct(torqueArm);
+//        torque += force.crossProduct(torqueArm);
     }
-    public void applyForce(Vector2D force) {
-        applyForce(force, new Vector2D());
+    public void applyForce(Vector2 force) {
+        applyForce(force, new Vector2());
     }
 
-    public static Vector2D calculateTorqueArm(Vector2D position, RigidBody rigidBody) {
-        return Vector2D.difference(position, rigidBody.position);
+    public static Vector2 calculateTorqueArm(Vector2 position, RigidBody rigidBody) {
+        return Vector2.difference(position, rigidBody.position);
     }
-    public Vector2D calculateTorqueArm(Vector2D position) {
+    public Vector2 calculateTorqueArm(Vector2 position) {
         return calculateTorqueArm(position, this);
     }
     public void calculatePerimeter() {
-        Vector2D min = vertices[0].makeCopy();
-        Vector2D max = vertices[0].makeCopy();
+        Vector2 min = vertices[0].clone();
+        Vector2 max = vertices[0].clone();
         for (int i = 1; i < vertices.length; i++) {
-            if (vertices[i].x < min.x) {
-                min.x = vertices[i].x;
+            if (vertices[i].getX() < min.getX()) {
+                min.setX(vertices[i].getX());
             }
-            if (vertices[i].y < min.y) {
-                min.y = vertices[i].y;
+            if (vertices[i].getY() < min.getY()) {
+                min.setY(vertices[i].getY());
             }
-            if (vertices[i].x > max.x) {
-                max.x = vertices[i].x;
+            if (vertices[i].getX() > max.getX()) {
+                max.setX(vertices[i].getX());
             }
-            if (vertices[i].y > max.y) {
-                max.y = vertices[i].y;
+            if (vertices[i].getY() > max.getY()) {
+                max.setY(vertices[i].getY());
             }
         }
         this.perimeter = new Perimeter(min, max);
     }
 
-    public Vector2D[] getPolygonPoints() {
+    public Vector2[] getPolygonPoints() {
         return vertices;
     }
 
     public Line[] getPolygonLines() {
-        Vector2D[] points = getPolygonPoints();
+        Vector2[] points = getPolygonPoints();
         Line[] lines = new Line[4];
         for (int i = 0; i < 4; i++) {
             lines[i] = new Line(points[i], points[(i + 1) % 4]);
@@ -92,10 +92,10 @@ public class RigidBody {
     }
 
     public Polygon getPolygon(double scalar) {
-        Vector2D[] points = getPolygonPoints();
+        Vector2[] points = getPolygonPoints();
         Polygon polygon = new Polygon();
-        for (Vector2D point : points) {
-            polygon.addPoint((int) (point.x * scalar), (int) (point.y * scalar));
+        for (Vector2 point : points) {
+            polygon.addPoint((int) (point.getX() * scalar), (int) (point.getY() * scalar));
         }
         return polygon;
     }

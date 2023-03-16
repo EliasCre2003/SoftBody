@@ -1,19 +1,17 @@
 package eliascregard.interactives;
 
-import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseHandler;
-import eliascregard.input.MouseMovementHandler;
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 
 public class Button {
 
     String label;
     boolean isPressed = false;
-    Vector2D position;
+    Vector2 position;
     boolean mouseIsOver = false;
     public boolean isVisible = true;
 
-    Button(String label, Vector2D position) {
+    Button(String label, Vector2 position) {
         this.label = label;
         this.position = position;
     }
@@ -41,12 +39,12 @@ public class Button {
     }
 
     public void setPosition(double x, double y) {
-        this.position = new Vector2D(x, y);
+        this.position = new Vector2(x, y);
     }
-    public void setPosition(Vector2D position) {
+    public void setPosition(Vector2 position) {
         this.position = position;
     }
-    public Vector2D getPosition() {
+    public Vector2 getPosition() {
         return this.position;
     }
     public void setVisibility(boolean isVisible) {

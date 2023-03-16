@@ -1,23 +1,23 @@
 package eliascregard.physics;
 
-import eliascregard.math.vectors.Vector2D;
+import eliascregard.math.vectors.Vector2;
 
 import java.awt.*;
 
 public class StaticObject {
 
-    private final Vector2D[] vertices;
+    private final Vector2[] vertices;
     private double frictionCoefficient;
     private double restitutionCoefficient;
     private Perimeter perimeter;
 
-    public StaticObject(Vector2D[] vertices, double frictionCoefficient, double restitutionCoefficient) {
+    public StaticObject(Vector2[] vertices, double frictionCoefficient, double restitutionCoefficient) {
         this.vertices = vertices;
         this.frictionCoefficient = frictionCoefficient;
         this.restitutionCoefficient = restitutionCoefficient;
         this.calculatePerimeter();
     }
-    public StaticObject(Vector2D[] vertices) {
+    public StaticObject(Vector2[] vertices) {
         this(vertices, 0, 1);
     }
 
@@ -31,8 +31,8 @@ public class StaticObject {
 
     public Polygon getPolygon(double scale) {
         Polygon polygon = new Polygon();
-        for (Vector2D vertex : vertices) {
-            polygon.addPoint((int) (vertex.x * scale), (int) (vertex.y * scale));
+        for (Vector2 vertex : vertices) {
+            polygon.addPoint((int) (vertex.getX() * scale), (int) (vertex.getY() * scale));
         }
         return polygon;
     }
@@ -57,17 +57,17 @@ public class StaticObject {
         return perimeter;
     }
 
-    public void move(Vector2D delta) {
-        for (Vector2D vertex : vertices) {
-            vertex.sum(delta);
+    public void move(Vector2 delta) {
+        for (Vector2 vertex : vertices) {
+            vertex.add(delta);
         }
     }
 
     public void rotate(double deltaAngle) {
         for (int i = 0; i < vertices.length; i++) {
-            vertices[i] = new Vector2D(
-                    vertices[i].x * Math.cos(deltaAngle) - vertices[i].y * Math.sin(deltaAngle),
-                    vertices[i].x * Math.sin(deltaAngle) + vertices[i].y * Math.cos(deltaAngle)
+            vertices[i] = new Vector2(
+                    vertices[i].getX() * Math.cos(deltaAngle) - vertices[i].getY() * Math.sin(deltaAngle),
+                    vertices[i].getX() * Math.sin(deltaAngle) + vertices[i].getY() * Math.cos(deltaAngle)
             );
         }
     }

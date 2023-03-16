@@ -1,8 +1,6 @@
 package eliascregard.interactives;
 
-import eliascregard.input.MouseButtonHandler;
 import eliascregard.input.MouseHandler;
-import eliascregard.input.MouseMovementHandler;
 
 import java.awt.*;
 
