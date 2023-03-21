@@ -18,7 +18,7 @@ public class PhysicsSpace {
     );
 
     private final static SpringBody TRIANGLE_SPRING_BODY = SpringBody.homogeneousTriangle(
-            0,  0, 15, 1, 3000, 100, 5, 10
+            0,  0, 15, 1, 2000, 50, 5, 10
     );
 
     private final static SpringBody HEXAGON_SPRING_BODY = SpringBody.homogeneousHexagon(
@@ -41,7 +41,6 @@ public class PhysicsSpace {
 
     public PhysicsSpace(Vector2 gravity) {
         this.gravity = gravity;
-        addSpringBody(SpringBody.load("Default.txt"));
 
     }
 
