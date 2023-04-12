@@ -75,20 +75,20 @@ public class Node {
     }
 
     public boolean isColliding(Line line) {
-        double side1 = Math.sqrt(Math.pow(this.position.getX() - line.getPoint1().getX(), 2) + Math.pow(this.position.getY() - line.getPoint2().getY(), 2));
-        double side2 = Math.sqrt(Math.pow(this.position.getX() - line.getPoint2().getX(), 2) + Math.pow(this.position.getY() - line.getPoint2().getY(), 2));
+        double side1 = Math.sqrt(Math.pow(this.position.x() - line.getPoint1().x(), 2) + Math.pow(this.position.y() - line.getPoint2().y(), 2));
+        double side2 = Math.sqrt(Math.pow(this.position.x() - line.getPoint2().x(), 2) + Math.pow(this.position.y() - line.getPoint2().y(), 2));
         if (side1 < this.radius || side2 < this.radius) {
             return true;
         }
 
         Vector2 distanceVector = Vector2.difference(line.getPoint1(), line.getPoint2());
         double dot = (
-                (this.position.getX() - line.getPoint1().getX()) * (line.getPoint2().getX() - line.getPoint1().getX()) +
-                (this.position.getY() - line.getPoint1().getY()) * (line.getPoint2().getY() - line.getPoint1().getY())
+                (this.position.x() - line.getPoint1().x()) * (line.getPoint2().x() - line.getPoint1().x()) +
+                (this.position.y() - line.getPoint1().y()) * (line.getPoint2().y() - line.getPoint1().y())
         ) / Math.pow(distanceVector.length(), 2);
         Vector2 closestPoint = new Vector2(
-                line.getPoint1().getX() + dot * (line.getPoint2().getX() - line.getPoint1().getX()),
-                line.getPoint1().getY() + dot * (line.getPoint2().getY() - line.getPoint1().getY())
+                line.getPoint1().x() + dot * (line.getPoint2().x() - line.getPoint1().x()),
+                line.getPoint1().y() + dot * (line.getPoint2().y() - line.getPoint1().y())
         );
         if (Line.linePoint(line, closestPoint)) {
             return Vector2.distance(this.position, closestPoint) < this.radius;
@@ -100,8 +100,8 @@ public class Node {
         if (this.isFixed) {
             return;
         }
-        double lineAngle = Math.atan2(line.getPoint2().getY() - line.getPoint1().getY(), line.getPoint2().getX() - line.getPoint1().getX());
-        double velocityAngle = Math.atan2(this.velocity.getY(), this.velocity.getX());
+        double lineAngle = Math.atan2(line.getPoint2().y() - line.getPoint1().y(), line.getPoint2().x() - line.getPoint1().x());
+        double velocityAngle = Math.atan2(this.velocity.y(), this.velocity.x());
         double reflectionAngle = 2 * lineAngle - velocityAngle;
         Vector2 collisionVector = Vector2.angleToVector(reflectionAngle);
         collisionVector.scale(this.velocity.length());
@@ -110,15 +110,15 @@ public class Node {
 
     public boolean insidePerimeter(StaticObject staticObject) {
         Perimeter perimeter = staticObject.getPerimeter();
-        return this.position.getX() < perimeter.getMax().getX() && this.position.getY() < perimeter.getMax().getY() &&
-                this.position.getX() > perimeter.getMin().getX() && this.position.getY() > perimeter.getMin().getY();
+        return this.position.x() < perimeter.getMax().x() && this.position.y() < perimeter.getMax().y() &&
+                this.position.x() > perimeter.getMin().x() && this.position.y() > perimeter.getMin().y();
     }
 
     public void resolveCollision(StaticObject staticObject) {
 
         // CHECKS IF THE NODE IS INSIDE THE PERIMETER OF THE STATIC OBJECT
         Line[] polygonLines = staticObject.getLines();
-        Line ray = new Line(position, new Vector2(position.getX() + Integer.MAX_VALUE, position.getY()));
+        Line ray = new Line(position, new Vector2(position.x() + Integer.MAX_VALUE, position.y()));
         int intersections = 0;
         Vector2[] closestPoints = new Vector2[polygonLines.length];
         for (int i = 0; i < polygonLines.length; i++) {
@@ -163,7 +163,7 @@ public class Node {
         this.isFixed = true;
     }
     public void fix(Vector2 position) {
-        this.fix(position.getX(), position.getY());
+        this.fix(position.x(), position.y());
     }
     public void fix() {
         this.isFixed = true;
@@ -172,17 +172,13 @@ public class Node {
         this.isFixed = false;
     }
 
-    public Circle getCircle() {
-        return new Circle(this.position, this.radius);
-    }
-
     public Node makeCopy() {
         return new Node(this.position.clone(), this.mass, this.radius);
     }
 
     public void render(Graphics2D g2, double scale) {
         g2.setColor(new Color(0, 0, 255));
-        g2.fillOval((int)((this.position.getX() - this.radius)*scale), (int)((this.position.getY() - this.radius)*scale), (int) (this.radius * 2 * scale), (int) (this.radius * 2 * scale));
+        g2.fillOval((int)((this.position.x() - this.radius)*scale), (int)((this.position.y() - this.radius)*scale), (int) (this.radius * 2 * scale), (int) (this.radius * 2 * scale));
     }
 
     public String toString() {

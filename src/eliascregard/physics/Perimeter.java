@@ -17,22 +17,22 @@ public class Perimeter {
     }
 
     public Perimeter(Vector2[] vertices) {
-        double maxX = vertices[0].getX();
-        double maxY = vertices[0].getY();
-        double minX = vertices[0].getX();
-        double minY = vertices[0].getY();
+        double maxX = vertices[0].x();
+        double maxY = vertices[0].y();
+        double minX = vertices[0].x();
+        double minY = vertices[0].y();
         for (int i = 1; i < vertices.length; i++) {
-            if (vertices[i].getX() > maxX) {
-                maxX = vertices[i].getX();
+            if (vertices[i].x() > maxX) {
+                maxX = vertices[i].x();
             }
-            if (vertices[i].getY() > maxY) {
-                maxY = vertices[i].getY();
+            if (vertices[i].y() > maxY) {
+                maxY = vertices[i].y();
             }
-            if (vertices[i].getX() < minX) {
-                minX = vertices[i].getX();
+            if (vertices[i].x() < minX) {
+                minX = vertices[i].x();
             }
-            if (vertices[i].getY() < minY) {
-                minY = vertices[i].getY();
+            if (vertices[i].y() < minY) {
+                minY = vertices[i].y();
             }
         }
         this.min = new Vector2(minX, minY);
@@ -40,8 +40,8 @@ public class Perimeter {
     }
 
     public static boolean perimeterIntersection(Perimeter perimeter1, Perimeter perimeter2) {
-        return perimeter1.min.getX() <= perimeter2.max.getX() && perimeter1.max.getX() >= perimeter2.min.getX() &&
-               perimeter1.min.getY() <= perimeter2.max.getY() && perimeter1.max.getY() >= perimeter2.min.getY();
+        return perimeter1.min.x() <= perimeter2.max.x() && perimeter1.max.x() >= perimeter2.min.x() &&
+               perimeter1.min.y() <= perimeter2.max.y() && perimeter1.max.y() >= perimeter2.min.y();
     }
 
     public Vector2 getMin() {

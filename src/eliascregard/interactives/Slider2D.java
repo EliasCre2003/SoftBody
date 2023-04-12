@@ -38,14 +38,14 @@ public class Slider2D {
     }
 
     private Vector2 calculateCirclePosition() {
-        double x = this.position.getX() + (this.value.getX() - this.xMin) / (this.xMax - this.xMin) * this.size.width;
-        double y = this.position.getY() + (this.value.getY() - this.yMin) / (this.yMax - this.yMin) * this.size.height;
+        double x = this.position.x() + (this.value.x() - this.xMin) / (this.xMax - this.xMin) * this.size.width;
+        double y = this.position.y() + (this.value.y() - this.yMin) / (this.yMax - this.yMin) * this.size.height;
         return new Vector2(x, y);
     }
 
     private Vector2 calculateValue() {
-        double x = this.xMin + (this.circlePosition.getX() - this.position.getX()) / this.size.width * (this.xMax - this.xMin);
-        double y = this.yMin + (this.circlePosition.getY() - this.position.getY()) / this.size.height * (this.yMax - this.yMin);
+        double x = this.xMin + (this.circlePosition.x() - this.position.x()) / this.size.width * (this.xMax - this.xMin);
+        double y = this.yMin + (this.circlePosition.y() - this.position.y()) / this.size.height * (this.yMax - this.yMin);
         return new Vector2(x, y);
     }
 
@@ -56,17 +56,17 @@ public class Slider2D {
 
     public void update(MouseHandler mouse) {
         if (this.isPressed) {
-            if (mouse.getX() < this.position.getX()) {
-                this.circlePosition.setX(position.getX());
-            } else if (mouse.getX() > this.position.getX() + this.size.width) {
-                this.circlePosition.setX(this.position.getX() + this.size.width);
+            if (mouse.getX() < this.position.x()) {
+                this.circlePosition.setX(position.x());
+            } else if (mouse.getX() > this.position.x() + this.size.width) {
+                this.circlePosition.setX(this.position.x() + this.size.width);
             } else {
                 this.circlePosition.setX(mouse.getX());
             }
-            if (mouse.getY() < this.position.getY()) {
-                this.circlePosition.setY(this.position.getY());
-            } else if (mouse.getY() > this.position.getY() + this.size.height) {
-                this.circlePosition.setY(this.position.getY() + this.size.height);
+            if (mouse.getY() < this.position.y()) {
+                this.circlePosition.setY(this.position.y());
+            } else if (mouse.getY() > this.position.y() + this.size.height) {
+                this.circlePosition.setY(this.position.y() + this.size.height);
             } else {
                 this.circlePosition.setY(mouse.getY());
             }
@@ -81,11 +81,11 @@ public class Slider2D {
 
     public void render(Graphics2D g2, double scale) {
         g2.setColor(new Color(0, 0, 0, 0.5f));
-        g2.fillRect((int) (this.position.getX() * scale), (int) (this.position.getY() * scale), (int) (this.size.width * scale), (int) (this.size.height * scale));
+        g2.fillRect((int) (this.position.x() * scale), (int) (this.position.y() * scale), (int) (this.size.width * scale), (int) (this.size.height * scale));
 //        g2.setColor(this.frameColor);
 //        g2.drawRect((int) (this.position.x * scale), (int) (this.position.y * scale), (int) (this.size.width * scale), (int) (this.size.height * scale));
         g2.setColor(this.circleColor);
-        g2.fillOval((int) ((this.circlePosition.getX() - 10) * scale), (int) ((this.circlePosition.getY() - 10) * scale), (int) (20 * scale), (int) (20 * scale));
+        g2.fillOval((int) ((this.circlePosition.x() - 10) * scale), (int) ((this.circlePosition.y() - 10) * scale), (int) (20 * scale), (int) (20 * scale));
     }
 
 }

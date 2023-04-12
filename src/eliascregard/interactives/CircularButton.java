@@ -53,11 +53,11 @@ public class CircularButton extends Button {
         }
         g2.setColor(new Color((int) (this.outlineColor.getRed() * colorMultiplier), (int) (this.outlineColor.getGreen() * colorMultiplier), (int) (this.outlineColor.getBlue() * colorMultiplier)));
         g2.setStroke(new BasicStroke((float) (1*scale)));
-        g2.drawOval((int) ((this.position.getX()) * scale), (int) ((this.position.getY()) * scale), (int) (this.radius * 2 * scale), (int) (this.radius * 2 * scale));
+        g2.drawOval((int) ((this.position.x()) * scale), (int) ((this.position.y()) * scale), (int) (this.radius * 2 * scale), (int) (this.radius * 2 * scale));
         g2.setColor(new Color((int) (this.insideColor.getRed() * colorMultiplier), (int) (this.insideColor.getGreen() * colorMultiplier), (int) (this.insideColor.getBlue() * colorMultiplier)));
-        g2.fillOval((int) ((this.position.getX() + 2.5) * scale), (int) ((this.position.getY() + 2.5) * scale), (int) ((this.radius * 2 - 5) * scale), (int) ((this.radius * 2 - 5) * scale));
+        g2.fillOval((int) ((this.position.x() + 2.5) * scale), (int) ((this.position.y() + 2.5) * scale), (int) ((this.radius * 2 - 5) * scale), (int) ((this.radius * 2 - 5) * scale));
         g2.setColor(new Color((int)(255*colorMultiplier), (int)(255*colorMultiplier), (int)(255*colorMultiplier)));
-        g2.drawString(this.label, (int) ((this.position.getX() + this.radius*2 + 5) * scale), (int) ((this.position.getY() + this.radius + 5) * scale));
+        g2.drawString(this.label, (int) ((this.position.x() + this.radius*2 + 5) * scale), (int) ((this.position.y() + this.radius + 5) * scale));
     }
 
 }

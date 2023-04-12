@@ -1,5 +1,7 @@
 package eliascregard.input;
 
+import eliascregard.math.vectors.Vector2;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -73,6 +75,9 @@ public class MouseHandler extends MouseAdapter {
 
     public int getY() {
         return y;
+    }
+    public Vector2 getPosition() {
+        return new Vector2(x, y);
     }
 
     public boolean leftIsPressed() {

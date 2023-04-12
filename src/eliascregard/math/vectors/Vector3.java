@@ -15,15 +15,15 @@ public class Vector3 extends Vector{
         this(0, 0, 0);
     }
 
-    public double getX() {
+    public double x() {
         return getParameter(1);
     }
 
-    public double getY() {
+    public double y() {
         return getParameter(2);
     }
 
-    public double getZ() {
+    public double z() {
         return getParameter(3);
     }
 
@@ -44,7 +44,7 @@ public class Vector3 extends Vector{
     }
 
     public void set(Vector3 vector) {
-        set(vector.getX(), vector.getY(), vector.getZ());
+        set(vector.x(), vector.y(), vector.z());
     }
 
     public Vector3 normalized() {

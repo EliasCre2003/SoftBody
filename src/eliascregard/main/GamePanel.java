@@ -8,6 +8,7 @@ import eliascregard.physics.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -121,7 +122,7 @@ public class GamePanel extends JPanel implements Runnable {
                 fps = time.getFPS(deltaTime);
             }
 
-            if (keys.escapePressed) {
+            if (keys.isKeyDown(KeyEvent.VK_ESCAPE)) {
                 System.exit(0);
             }
             update();
@@ -140,8 +141,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
 
-        if (keys.tPressed) {
-            keys.tPressed = false;
+        if (keys.isKeyJustPressed(KeyEvent.VK_T)) {
             renderMode = (renderMode + 1) % 2;
         }
 
@@ -197,7 +197,6 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("Total Nodes: " + mainSpace.getTotalNodes(), 10, 80);
             g2.drawString("Total Springs: " + mainSpace.getTotalSprings(), 10, 100);
         }
-
         g2.dispose();
     }
 }

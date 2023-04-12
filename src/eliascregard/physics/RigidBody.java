@@ -62,17 +62,17 @@ public class RigidBody {
         Vector2 min = vertices[0].clone();
         Vector2 max = vertices[0].clone();
         for (int i = 1; i < vertices.length; i++) {
-            if (vertices[i].getX() < min.getX()) {
-                min.setX(vertices[i].getX());
+            if (vertices[i].x() < min.x()) {
+                min.setX(vertices[i].x());
             }
-            if (vertices[i].getY() < min.getY()) {
-                min.setY(vertices[i].getY());
+            if (vertices[i].y() < min.y()) {
+                min.setY(vertices[i].y());
             }
-            if (vertices[i].getX() > max.getX()) {
-                max.setX(vertices[i].getX());
+            if (vertices[i].x() > max.x()) {
+                max.setX(vertices[i].x());
             }
-            if (vertices[i].getY() > max.getY()) {
-                max.setY(vertices[i].getY());
+            if (vertices[i].y() > max.y()) {
+                max.setY(vertices[i].y());
             }
         }
         this.perimeter = new Perimeter(min, max);
@@ -95,7 +95,7 @@ public class RigidBody {
         Vector2[] points = getPolygonPoints();
         Polygon polygon = new Polygon();
         for (Vector2 point : points) {
-            polygon.addPoint((int) (point.getX() * scalar), (int) (point.getY() * scalar));
+            polygon.addPoint((int) (point.x() * scalar), (int) (point.y() * scalar));
         }
         return polygon;
     }

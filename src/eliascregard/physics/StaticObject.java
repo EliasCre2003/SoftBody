@@ -32,7 +32,7 @@ public class StaticObject {
     public Polygon getPolygon(double scale) {
         Polygon polygon = new Polygon();
         for (Vector2 vertex : vertices) {
-            polygon.addPoint((int) (vertex.getX() * scale), (int) (vertex.getY() * scale));
+            polygon.addPoint((int) (vertex.x() * scale), (int) (vertex.y() * scale));
         }
         return polygon;
     }
@@ -66,8 +66,8 @@ public class StaticObject {
     public void rotate(double deltaAngle) {
         for (int i = 0; i < vertices.length; i++) {
             vertices[i] = new Vector2(
-                    vertices[i].getX() * Math.cos(deltaAngle) - vertices[i].getY() * Math.sin(deltaAngle),
-                    vertices[i].getX() * Math.sin(deltaAngle) + vertices[i].getY() * Math.cos(deltaAngle)
+                    vertices[i].x() * Math.cos(deltaAngle) - vertices[i].y() * Math.sin(deltaAngle),
+                    vertices[i].x() * Math.sin(deltaAngle) + vertices[i].y() * Math.cos(deltaAngle)
             );
         }
     }

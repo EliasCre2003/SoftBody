@@ -270,7 +270,7 @@ public class SpringBody {
             StringBuilder bodyString = new StringBuilder();
             for (Node node : nodes) {
                 String newNode =
-                        node.position.getX() + " " + node.position.getY() + " " + node.mass + " " + node.radius + " "
+                        node.position.x() + " " + node.position.y() + " " + node.mass + " " + node.radius + " "
                         + node.isFixed + "; ";
                 bodyString.append(newNode);
             }
@@ -333,9 +333,9 @@ public class SpringBody {
         if (renderingMode == 1) {
             g2.setColor(new Color(0,255,0));
             for (Node node : this.nodes) {
-                Point p1 = new Point((int)(node.position.getX()*scale), (int)(node.position.getY()*scale));
-                Point p2 = new Point((int)((node.position.getX() + node.velocity.getX() * 0.1)*scale),
-                        (int)((node.position.getY() + node.velocity.getY() * 0.1)*scale));
+                Point p1 = new Point((int)(node.position.x()*scale), (int)(node.position.y()*scale));
+                Point p2 = new Point((int)((node.position.x() + node.velocity.x() * 0.1)*scale),
+                        (int)((node.position.y() + node.velocity.y() * 0.1)*scale));
                 g2.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
         }

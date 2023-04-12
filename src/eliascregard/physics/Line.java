@@ -25,7 +25,7 @@ public class Line {
     }
     public Vector2 normal() {
         if (normal == null) {
-            normal = new Vector2(point2.getY() - point1.getY(), point1.getX() - point2.getX());
+            normal = new Vector2(point2.y() - point1.y(), point1.x() - point2.x());
             normal.normalize();
         }
         return normal;
@@ -39,10 +39,10 @@ public class Line {
     }
 
     public static Vector2 lineLineIntersection(Line line1, Line line2) {
-        double x1 = line1.point1.getX(), y1 = line1.point1.getY();
-        double x2 = line1.point2.getX(), y2 = line1.point2.getY();
-        double x3 = line2.point1.getX(), y3 = line2.point1.getY();
-        double x4 = line2.point2.getX(), y4 = line2.point2.getY();
+        double x1 = line1.point1.x(), y1 = line1.point1.y();
+        double x2 = line1.point2.x(), y2 = line1.point2.y();
+        double x3 = line2.point1.x(), y3 = line2.point1.y();
+        double x4 = line2.point2.x(), y4 = line2.point2.y();
 
         double denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
         if (denominator == 0) {
